@@ -1,3 +1,4 @@
 # Michat
 A websocket server based on Node.js
-Run "npm install ws" "npm install nodejs-websocket" "npm install commander" before use.
+
+You must run "npm install ws", "npm install nodejs-websocket" and "npm install commander" first, then use "node server.js" to start the websocket server.
