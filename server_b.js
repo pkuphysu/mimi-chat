@@ -3,8 +3,8 @@ var program = require("commander"),
 	fs = require("fs");
 
 program
-	.version("0.1.1", "-v, --version")
-	.description("Michat WebSocket server version 0.1.1 Copyright (c) 2018 Steven Joe 'Mimi' Zhang")
+	.version("0.1.1b", "-v, --version")
+	.description("Michat WebSocket server version 0.1.1b Copyright (c) 2018 Steven Joe 'Mimi' Zhang")
 	.usage("_(:з」∠)_")
 	.option("-d, --debug", "show logs in the console in order to debug")
 	.option("-m, --multi", "write logs to different files accroading to the channel")
