@@ -1,5 +1,5 @@
 //https://github.com/sitegui/nodejs-websocket
-var program = require("commander"),
+const program = require("commander"),
 	fs = require("fs");
 
 program
@@ -29,7 +29,7 @@ if (!logs) message += " won't write to files.";
 if (logs) message += " write to files in /logs.";
 console.log(message);
 //初始化
-var ws = require("nodejs-websocket");
+const ws = require("nodejs-websocket");
 var server = ws.createServer(function(conn){
 	console.log("[New User]", conn.protocols[0]);
 	//conn.channel = conn.protocols[0];

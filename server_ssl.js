@@ -1,6 +1,7 @@
 //https://github.com/websockets/ws/blob/master/doc/ws.md
 const program = require("commander"),
-	fs = require("fs");
+	fs = require("fs"),
+	https = require("https");
 
 program
 	.version("0.1.1a", "-v, --version")
@@ -9,21 +10,27 @@ program
 	.option("-d, --debug", "show logs in the console in order to debug")
 	.option("-m, --multi", "write logs to different files accroading to the channel")
 	.option("-s, --single", "write logs to a single file")
-	.option("-p, --port <port>", "set the listening port <port>", 9000)
+	.option("-p, --port <port>", "set the listening port <port>", 9005)
 	.parse(process.argv);
 
 if (!(program.port >= 0 && program.port < 65536 && program.port % 1 === 0)) {
 	console.error("[ERROR] Port argument must be an integer >= 0 and < 65536.");
-	program.port = 9000;
+	program.port = 9005;
 }
 
+const server = https.createServer({
+	cert: fs.readFileSync("/etc/letsencrypt/live/your.domain.name/fullchain.pem"),
+	key: fs.readFileSync("/etc/letsencrypt/live/your.domain.name/privkey.pem"),/*
+	port: program.port, //监听接口
+	verifyClient: socketVerify, //可选，验证连接函数
+	clientTracking: true,
+	maxPayload: 1300 //50个unicode字符最大可能大小（Emoji表情“一家人”）*/
+});
+
+server.listen(program.port);
+
 const WebSocketServer = require("ws").Server,
-	wss = new WebSocketServer({
-		port: program.port, //监听接口
-		verifyClient: socketVerify, //可选，验证连接函数
-		clientTracking: true,
-		maxPayload: 1300 //50个unicode字符最大可能大小（Emoji表情“一家人”）
-	});
+	wss = new WebSocketServer({ server });
 
 function socketVerify(info) {
 	if (program.debug) console.log("[New User]", info.req.headers["sec-websocket-protocol"], info.origin, info.req.url, info.secure);
@@ -100,3 +107,4 @@ else message += " but";
 if (!logs) message += " won't write to files.";
 if (logs) message += " write to files in /logs.";
 console.log(message);
+
