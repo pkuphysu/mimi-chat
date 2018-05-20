@@ -96,7 +96,7 @@ process.on("uncaughtException", function(error) {
 	//process.exit(); //不强制退出可能产生不可控问题
 });
 //控制台输出
-var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + wss.options.port + ". When users connect or send message, logs will";
+var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + program.port + ". When users connect or send message, logs will";
 if (program.debug) message += " show in the console";
 if (!program.debug) message += " not show in the console";
 var logs;
@@ -107,4 +107,3 @@ else message += " but";
 if (!logs) message += " won't write to files.";
 if (logs) message += " write to files in /logs.";
 console.log(message);
-

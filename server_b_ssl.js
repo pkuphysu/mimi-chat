@@ -16,6 +16,7 @@ if (!(program.port >= 0 && program.port < 65536 && program.port % 1 === 0)) {
 	console.error("[ERROR] Port argument must be an integer >= 0 and < 65536.");
 	program.port = 9000;
 }
+
 //控制台输出
 var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + program.port + ". When users connect or send message, logs will";
 if (program.debug) message += " show in the console";
@@ -31,7 +32,12 @@ console.log(message);
 
 //初始化
 const ws = require("nodejs-websocket");
-var server = ws.createServer(function(conn){
+var options = {
+	secure: true,
+	cert: fs.readFileSync("/etc/letsencrypt/live/your.domain.name/fullchain.pem"),
+	key: fs.readFileSync("/etc/letsencrypt/live/your.domain.name/privkey.pem")
+}
+var server = ws.createServer(options, function(conn){
 	console.log("[New User]", conn.protocols[0]);
 	//conn.channel = conn.protocols[0];
 	//protocol用来区分channel 其值与前面的 info.req.headers["sec-websocket-protocol"] 相同
