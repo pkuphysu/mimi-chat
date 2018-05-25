@@ -19,7 +19,7 @@ if (!(program.port >= 0 && program.port < 65536 && program.port % 1 === 0)) {
 
 const WebSocketServer = require("ws").Server,
 	wss = new WebSocketServer({
-		port: program.port, //监听接口
+		port: program.port, //监听端口
 		verifyClient: socketVerify, //可选，验证连接函数
 		clientTracking: true,
 		maxPayload: 1300 //50个unicode字符最大可能大小（Emoji表情“一家人”）

@@ -31,7 +31,7 @@ console.log(message);
 
 //初始化
 const ws = require("nodejs-websocket");
-var server = ws.createServer(function(conn){
+var server = ws.createServer(function(conn) {
 	console.log("[New User]", conn.protocols[0]);
 	//conn.channel = conn.protocols[0];
 	//protocol用来区分channel 其值与前面的 info.req.headers["sec-websocket-protocol"] 相同

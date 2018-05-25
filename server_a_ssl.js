@@ -21,13 +21,12 @@ if (!(program.port >= 0 && program.port < 65536 && program.port % 1 === 0)) {
 const server = https.createServer({
 	cert: fs.readFileSync("/etc/letsencrypt/live/your.domain.name/fullchain.pem"),
 	key: fs.readFileSync("/etc/letsencrypt/live/your.domain.name/privkey.pem"),/*
-	port: program.port, //监听接口
 	verifyClient: socketVerify, //可选，验证连接函数
 	clientTracking: true,
 	maxPayload: 1300 //50个unicode字符最大可能大小（Emoji表情“一家人”）*/
 });
 
-server.listen(program.port);
+server.listen(program.port); //监听端口
 
 const WebSocketServer = require("ws").Server,
 	wss = new WebSocketServer({ server });
