@@ -16,6 +16,7 @@ if (!(program.port >= 0 && program.port < 65536 && program.port % 1 === 0)) {
 	console.error("[ERROR] Port argument must be an integer >= 0 and < 65536.");
 	program.port = 9000;
 }
+
 //控制台输出
 var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + program.port + ". When users connect or send message, logs will";
 if (program.debug) message += " show in the console";

@@ -1,6 +1,6 @@
 # Michat
-A websocket server based on Node.js  
-基于Node.js构建的websocket服务器
+Websocket server based on Node.js  
+基于Node.js构建的Websocket服务器，支持ws和wss协议
 
 ## Install
 ```
@@ -46,7 +46,7 @@ ws.onerror = function() {
 ```
 
 ## Credits
-* [Mimi](http://zsq.im) Developer of this project.
+* [Mimi](https://zhangshuqiao.org) Developer of this project.
 
 ## License
 Released under the GNU General Public License v3  

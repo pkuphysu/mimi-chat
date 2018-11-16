@@ -88,6 +88,7 @@ process.on("uncaughtException", function(error) {
 	if (program.debug) console.error("[FATAL ERROR] " + error);
 	//process.exit(); //不强制退出可能产生不可控问题
 });
+
 //控制台输出
 var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + wss.options.port + ". When users connect or send message, logs will";
 if (program.debug) message += " show in the console";
