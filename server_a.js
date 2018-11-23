@@ -1,4 +1,21 @@
-//https://github.com/websockets/ws/blob/master/doc/ws.md
+/*
+ * Michat Server
+ * Created by Shuqiao Zhang in 2018.
+ * https://zhangshuqiao.org
+ */
+
+/* 
+ * This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ */
+
 const program = require("commander"),
 	fs = require("fs");
 
@@ -90,7 +107,7 @@ process.on("uncaughtException", function(error) {
 });
 
 //控制台输出
-var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + wss.options.port + ". When users connect or send message, logs will";
+var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + program.port + ". When users connect or send message, logs will";
 if (program.debug) message += " show in the console";
 if (!program.debug) message += " not show in the console";
 var logs;
