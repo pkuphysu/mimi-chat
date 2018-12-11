@@ -53,7 +53,7 @@ function timeStamp() {
 	return date.slice(0, 10) + " " + date.slice(11, 19) + " ";
 }
 //count记录某个频道的人数
-var count = new Array();
+var count = [];
 //广播
 wss.broadcast = function(type, user, content, towhom) {
 	var data = {"type": type, "user": user, "content": content};
@@ -107,14 +107,5 @@ process.on("uncaughtException", function(error) {
 });
 
 //控制台输出
-var message = "Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port " + program.port + ". When users connect or send message, logs will";
-if (program.debug) message += " show in the console";
-if (!program.debug) message += " not show in the console";
-var logs;
-if (program.multi || program.single) logs = true;
-else logs = false;
-if ((program.debug && logs) || (!program.debug && !logs)) message += " and";
-else message += " but";
-if (!logs) message += " won't write to files.";
-if (logs) message += " write to files in /logs.";
-console.log(message);
+var logs = program.multi || program.single;
+console.log(`Thank you for using Michat WebSocket server. Use '-h' for help. The server will run on port ${program.port}. When users connect or send message, logs will ${program.debug ? "" : "not "}show in the console ${((program.debug && logs) || (!program.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);

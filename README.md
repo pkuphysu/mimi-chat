@@ -1,6 +1,7 @@
 # Michat Server
+
 Websocket server based on Node.js  
-基于Node.js构建的Websocket服务器，支持ws和wss协议
+基于Node.js构建的Websocket服务器，支持ws和wss协议。
 
 ## Install
 ```bash
@@ -25,15 +26,15 @@ server_a uses ws, and server_b uses nodejs-websocket.
 ## Usage
 Server Options:
 ```bash
-    -v, --version      show the version number
-    -d, --debug        show logs in the console in order to debug
-    -m, --multi        write logs to different files accroading to the channel
-    -s, --single       write logs to a single file
-    -p, --port         set the listening port (default: 9000)
-    -h, --help         show help
+  -v, --version  show the version number
+  -d, --debug    show logs in the console in order to debug
+  -m, --multi    write logs to different files accroading to the channel
+  -s, --single   write logs to a single file
+  -p, --port     set the listening port (default: 9000)
+  -h, --help     show help
 ```
 
-Client (use jQuery):
+Client (using jQuery):
 ```javascript
 var ws = new WebSocket("ws://localhost:9000", headers = channel);
 //you can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
