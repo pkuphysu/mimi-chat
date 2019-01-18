@@ -26,12 +26,12 @@ program
 	.option("-d, --debug", "show logs in the console in order to debug")
 	.option("-m, --multi", "write logs to different files accroading to the channel")
 	.option("-s, --single", "write logs to a single file")
-	.option("-p, --port <port>", "set the listening port <port>", 9000)
+	.option("-p, --port <port>", "set the listening port <port>", 9005)
 	.parse(process.argv);
 
 if (!(program.port >= 0 && program.port < 65536 && program.port % 1 === 0)) {
 	console.error("[ERROR] Port argument must be an integer >= 0 and < 65536.");
-	program.port = 9000;
+	program.port = 9005;
 }
 
 //控制台输出
