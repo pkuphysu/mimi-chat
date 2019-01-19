@@ -1,0 +1,9 @@
+{
+	"port": 9000,
+	"use_ssl": false,
+	"cert": "/etc/letsencrypt/live/your.domain.name/fullchain.pem",
+	"key": "/etc/letsencrypt/live/your.domain.name/privkey.pem",
+	"debug": false,
+	"multi_log": false,
+	"single_log": false
+}

@@ -1,6 +1,6 @@
 {
 	"name": "MichatServer",
-	"version": "0.2.0",
+	"version": "0.9.0",
 	"description": "Michat Server",
 	"repository": {
 		"type": "git",
@@ -13,7 +13,6 @@
 	"author": "Mimi",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
-		"commander": "^2.19.0",
 		"nodejs-websocket": "^1.7.2",
 		"ws": "^6.1.2"
 	}

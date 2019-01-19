@@ -84,7 +84,7 @@ function cancel() {
 	document.getElementById("show_name").value = uname;
 }
 
-var ws = new WebSocket("wss://localhost:9005", headers = "chat");
+var ws = new WebSocket("wss://localhost:9000", headers = "chat");
 ws.onopen = function () {
 	document.getElementById("msg_list").innerHTML = "";
 	listMsg("系统消息：建立连接成功");

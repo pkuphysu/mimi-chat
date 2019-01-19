@@ -19,20 +19,34 @@ npm install
 ## Run
 ```bash
 node server_a.js
-#or node server_b.js
+```
+or 
+```bash
+node server_b.js
 ```
 server_a uses ws, and server_b uses nodejs-websocket.
 
-## Usage
-Server Options:
+Default config file is `config.json`. If you want to specify another config file, you can take it as the third argument, e.g.
 ```bash
-  -v, --version  show the version number
-  -d, --debug    show logs in the console in order to debug
-  -m, --multi    write logs to different files accroading to the channel
-  -s, --single   write logs to a single file
-  -p, --port     set the listening port (default: 9000)
-  -h, --help     show help
+node server_a.js /path/to/your/config.json
 ```
+or 
+```bash
+node server_b.js /path/to/your/config.json
+```
+
+## Usage
+Server options (in `config.json`):
+
+| Option       | Available value | Description                                             |
+|--------------|-----------------|---------------------------------------------------------|
+| `port`       | integer         | set the listening port (default: 9000)                  |
+| `use_ssl `   | true / false    | whether to use ssl                                      |
+| `cert`       | string          | path to your ssl cert                                   |
+| `key`        | string          | path to your ssl key                                    |
+| `debug`      | true / false    | show logs in the console in order to debug              |
+| `multi_log`  | true / false    | write logs to different files accroading to the channel |
+| `single_log` | true / false    | write logs to a single file                             |
 
 Client (using jQuery):
 ```javascript
