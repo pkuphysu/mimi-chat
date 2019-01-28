@@ -9,7 +9,7 @@ Websocket server based on Node.js
 git clone https://github.com/stevenjoezhang/michat-server.git
 # Go into the repository
 cd michat-server
-# Install dependency packges
+# Install dependencies
 npm install
 ```
 **Note**: Run `npm install` to install dependency packges:
@@ -48,20 +48,21 @@ Server options (in `config.json`):
 | `multi_log`  | true / false    | write logs to different files accroading to the channel |
 | `single_log` | true / false    | write logs to a single file                             |
 
-Client (using jQuery):
+Client (using jQuery, see `client_sample.html`):
 ```javascript
 var ws = new WebSocket("ws://localhost:9000", headers = channel);
-//you can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
+//If you're using ssl, replace ws with wss
+//You can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
 ws.onopen = function() {
-	//do something
+	//Do something...
 };
 ws.onmessage = function(event) {
 	var msg = JSON.parse(event.data);
 	//You will receive msg.type and msg.content here
-	//do something
+	//Do something...
 };
 ws.onerror = function() {
-	//do something
+	//Do something...
 };
 ```
 

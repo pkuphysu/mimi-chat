@@ -85,6 +85,7 @@ function cancel() {
 }
 
 var ws = new WebSocket("ws://localhost:9000", headers = "chat");
+//If you're using ssl, replace ws with wss
 ws.onopen = function () {
 	document.getElementById("msg_list").innerHTML = "";
 	listMsg("系统消息：建立连接成功");
