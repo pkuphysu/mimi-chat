@@ -1,3 +1,2 @@
-server_a_ssl_vmstat.js
+node_modules/
 package-lock.json
-node_modules

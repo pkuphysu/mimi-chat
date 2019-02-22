@@ -16,9 +16,7 @@
  *  GNU General Public License for more details.
  */
 
-const fs = require("fs"),
-	path = require("path");
-var config = JSON.parse(fs.readFileSync(process.argv[2] || path.join(__dirname, "config.json")));
+var config = require(process.argv[2] || "./config.json");
 
 if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 	console.error("[ERROR] Port argument must be an integer >= 0 and < 65536.");
