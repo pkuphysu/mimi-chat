@@ -34,7 +34,7 @@ var options = config.use_ssl ? {
 	cert: fs.readFileSync(config.cert),
 	key: fs.readFileSync(config.key)
 } : {};
-var server = ws.createServer(options, function(conn) {
+var server = ws.createServer(options, (conn) => {
 	console.log("[New User]", conn.protocols[0]);
 	//conn.channel = conn.protocols[0];
 	//protocol用来区分channel 其值与前面的 info.req.headers["sec-websocket-protocol"] 相同
@@ -42,28 +42,30 @@ var server = ws.createServer(options, function(conn) {
 	else count[conn.protocols[0]]++;
 	server.broadcast("system", count[conn.protocols[0]], "+1", conn.protocols[0]);
 	//发送消息
-	conn.on("text", function(data) {
+	conn.on("text", (data) => {
 		if (conn.banned) return;
 		conn.banned = true;
-		setTimeout(function(){conn.banned = false}, 3000); //避免刷屏
+		setTimeout(() => {
+			conn.banned = false;
+		}, 3000); //避免刷屏
 		var msg = JSON.parse(data);
 		server.broadcast("user", msg.user, msg.content, conn.protocols[0]);
 		var msglist = msg.user + " " + msg.content;
 		if (config.debug) console.log("[New Message]", conn.protocols[0], msglist);
-		if (config.multi_log) fs.appendFile("logs/" + conn.protocols[0] + ".log", timeStamp() + msglist + "\n", function(err) {
+		if (config.multi_log) fs.appendFile("logs/" + conn.protocols[0] + ".log", timeStamp() + msglist + "\n", (err) => {
 			if (err && config.debug) console.error("[ERROR] Failed to write the log.");
 		});
-		if (config.single_log) fs.appendFile("logs/msg.logs", timeStamp() + conn.protocols[0] + " " + msglist + "\n", function(err) {
+		if (config.single_log) fs.appendFile("logs/msg.logs", timeStamp() + conn.protocols[0] + " " + msglist + "\n", (err) => {
 			if (err && config.debug) console.error("[ERROR] Failed to write the log.");
 		});
 	});
 	//退出聊天
-	conn.on("close", function(close) {
+	conn.on("close", (close) => {
 		count[conn.protocols[0]]--;
 		server.broadcast("system", count[conn.protocols[0]], "-1", conn.protocols[0]);
 	});
 	//错误处理
-	conn.on("error", function(error) {
+	conn.on("error", (error) => {
 		if (config.debug) console.error("[ERROR] " + error);
 	});
 }).listen(config.port);
@@ -75,19 +77,19 @@ function timeStamp() {
 //count记录某个频道的人数
 var count = [];
 //广播
-server.broadcast = function(type, user, content, towhom) {
+server.broadcast = (type, user, content, towhom) => {
 	var data = {"type": type, "user": user, "content": content};
 	var str = JSON.stringify(data);
-	server.connections.forEach(function(client) {
+	server.connections.forEach((client) => {
 		//console.log(client.protocol);
 		if (client.protocols[0] == towhom) client.send(str);
 	});
 };
-server.on("error", function(error) {
+server.on("error", (error) => {
 	if (config.debug) console.error("[ERROR] " + error);
 });
 
-process.on("uncaughtException", function(error) {
+process.on("uncaughtException", (error) => {
 	if (config.debug) console.error("[FATAL ERROR] " + error);
 	//process.exit(); //不强制退出可能产生不可控问题
 });

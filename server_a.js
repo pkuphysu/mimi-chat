@@ -68,53 +68,55 @@ function timeStamp() {
 //count记录某个频道的人数
 var count = [];
 //广播
-wss.broadcast = function(type, user, content, towhom) {
+wss.broadcast = (type, user, content, towhom) => {
 	var data = {"type": type, "user": user, "content": content};
 	var str = JSON.stringify(data);
-	wss.clients.forEach(function(client) {
+	wss.clients.forEach((client) => {
 		//console.log(client.protocol);
 		if (client.protocol == towhom) client.send(str);
 	});
 };
 //初始化
-wss.on("connection", function(ws) {
+wss.on("connection", (ws) => {
 	//ws.channel = ws.protocol;
 	//protocol用来区分channel 其值与前面的 info.req.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
 	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
 	//发送消息
-	ws.on("message", function(data) {
+	ws.on("message", (data) => {
 		if (ws.banned) return;
 		ws.banned = true;
-		setTimeout(function(){ws.banned = false}, 3000); //避免刷屏
+		setTimeout(() => {
+			ws.banned = false;
+		}, 3000); //避免刷屏
 		var msg = JSON.parse(data);
 		wss.broadcast("user", msg.user, msg.content, ws.protocol);
 		var msglist = msg.user + " " + msg.content;
 		if (config.debug) console.log("[New Message]", ws.protocol, msglist);
-		if (config.multi_log) fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", function(err) {
+		if (config.multi_log) fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", (err) => {
 			if (err && config.debug) console.error("[ERROR] Failed to write the log.");
 		});
-		if (config.single_log) fs.appendFile("logs/msg.logs", timeStamp() + ws.protocol + " " + msglist + "\n", function(err) {
+		if (config.single_log) fs.appendFile("logs/msg.logs", timeStamp() + ws.protocol + " " + msglist + "\n", (err) => {
 			if (err && config.debug) console.error("[ERROR] Failed to write the log.");
 		});
 	});
 	//退出聊天
-	ws.on("close", function(close) {
+	ws.on("close", (close) => {
 		count[ws.protocol]--;
 		wss.broadcast("system", count[ws.protocol], "-1", ws.protocol);
 	});
 	//错误处理
-	ws.on("error", function(error) {
+	ws.on("error", (error) => {
 		if (config.debug) console.error("[ERROR] " + error);
 	});
 });
 
-wss.on("error", function(error) {
+wss.on("error", (error) => {
 	if (config.debug) console.error("[ERROR] " + error);
 });
 
-process.on("uncaughtException", function(error) {
+process.on("uncaughtException", (error) => {
 	if (config.debug) console.error("[FATAL ERROR] " + error);
 	//process.exit(); //不强制退出可能产生不可控问题
 });
