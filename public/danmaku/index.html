@@ -235,6 +235,10 @@ function wsinit() {
 	};
 }
 
+setInterval(function() {
+	if (ws) ws.send("ping");
+}, 30000);
+
 function checkKey(event) {
 	return event.keyCode == 13 ? send() : false;
 }

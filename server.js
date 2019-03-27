@@ -83,7 +83,7 @@ wss.on("connection", (ws) => {
 	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
 	//发送消息
 	ws.on("message", (data) => {
-		if (ws.banned) return;
+		if (ws.banned || data == "ping") return;
 		ws.banned = true;
 		setTimeout(() => {
 			ws.banned = false;

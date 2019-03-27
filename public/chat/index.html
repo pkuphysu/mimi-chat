@@ -112,6 +112,10 @@ $(document).ready(function() {
 	});
 });
 
+setInterval(function() {
+	if (ws) ws.send("ping");
+}, 30000);
+
 function randomName() {
 	var name;
 	$.ajax("https://api.galaxymimi.com/name/", {

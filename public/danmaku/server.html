@@ -90,6 +90,10 @@ function wsinit() {
 	};
 }
 
+setInterval(function() {
+	if (ws) ws.send("ping");
+}, 30000);
+
 var output = [];
 var index = 0;
 
