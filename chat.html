@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
+<title>Mimi聊天</title>
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.jpg"/>
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<script src="/js/galaxymimi.js"></script>
+<div class="navbar navbar-default">
+	<div class="container">
+		<div class="navbar-header">
+			<div class="navbar-brand">
+				米米聊天
+			</div>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		<div class="collapse navbar-collapse navbar-right" id="navBar">
+			<ul class="nav navbar-nav">
+				<li><a href="/" target="_blank">首页</a></li>
+				<li><a href="/danmaku/" target="_blank">弹幕</a></li>
+			</ul>
+		</div>
+	</div>
+</div>	
+
+<div class="container">
+	<div class="col-md-9">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="panel-title" id="title">
+					Mimi在线聊天室
+				</div>
+			</div>
+			<textarea id="msg_list" style="width: 100%; height: 400px; font-size: large;" readonly="readonly">
+			</textarea>
+
+			<div class="form-inline">
+				<div class="input-group">
+					<div class="input-group-addon" style="width: 1%;">消息</div>
+					<input type="text" class="form-control" id="msg_box" onkeydown="checkKey(event)">
+					<div class="input-group-addon" onclick="send()" style="width: 1%;">发送</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3 text-center">
+		<h1 id="user_num">当前在线：0</h1>
+		<div class="form-group">
+			<label for="show_channel">频道</label>
+			<input class="form-control" type="text" id="show_channel" disabled="disabled">
+		</div>
+		<div class="form-group">
+			<label for="show_name">用户名</label>
+			<input class="form-control" type="text" id="show_name">
+		</div>
+		<div class="form-group">
+			<button class="btn btn-success" type="button" onclick="randomName()">随机</button>
+			<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
+			<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
+		</div>
+	</div>
+</div>
+
+<script>
+var uname = randomName(); //存储用户名到全局变量，握手成功后发送给服务器
+function randomName() {
+	var name;
+	$.ajax("https://api.galaxymimi.com/name/", {
+		type: "get",
+		async: false, //重要，确保获取了用户名之后再进行下一步，否则代码不会顺序执行
+		error: function(xhr, status, error) {
+			console.log("Error");
+			name = "蛤";
+		},
+		success: function(data, status, xhr) {
+			name = data;
+		}
+	});
+	document.getElementById("show_name").value = name;
+	return name;
+}
+
+function submit() {
+	uname = document.getElementById("show_name").value;
+	alert("用户名已更新！");
+}
+
+function cancel() {
+	document.getElementById("show_name").value = uname;
+}
+
+var ws = new WebSocket("wss://mimichat.herokuapp.com", headers = "chat");
+ws.onopen = function () {
+	document.getElementById("msg_list").innerHTML = "";
+	listMsg("系统消息：建立连接成功");
+};
+
+ws.onmessage = function (event) {
+	var msg = JSON.parse(event.data);
+	var sender;
+	switch (msg.type) {
+		case "system":
+			sender = "系统消息：在线人数";
+			document.getElementById("user_num").innerHTML = "当前在线：" + msg.user;
+			break;
+		case "user":
+			sender = msg.user + "：";
+			break;
+			return;
+	}
+	listMsg(sender + msg.content);
+};
+
+ws.onerror = function () {
+	document.getElementById("msg_list").innerHTML = "";
+	listMsg("系统消息：连接失败，请刷新或稍后再试");
+};
+
+function checkKey(event) {
+	var key_num = event.keyCode;
+	if (key_num == 13) {
+		send();
+	} else {
+		return false;
+	}
+}
+
+function send() {
+	var content = document.getElementById("msg_box").value;
+	var reg = new RegExp(/\s/g);
+	if (!content.replace(reg, "")) {
+		alert("内容无效！");
+		return;
+	}
+	var msg = {"content": content.trim(), "user": uname};
+	sendMsg(msg);
+	$("#msg_box").val("");
+}
+
+function sendMsg(msg) {
+	var data = JSON.stringify(msg);
+	ws.send(data);
+}
+
+function listMsg(data) {
+	var msg_list = document.getElementById("msg_list");
+	msg_list.innerHTML += data + "\n";
+	msg_list.scrollTop = msg_list.scrollHeight;
+}
+</script>
+</body>
+</html>

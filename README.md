@@ -1,7 +1,7 @@
-# Michat Server
+# Mimi Chat
 
-Websocket server based on Node.js  
-基于Node.js构建的Websocket服务器，支持ws和wss协议。
+基于Node.js构建的Websocket服务器，支持ws和wss协议。  
+Websocket server based on Node.js
 
 ## Install
 ```bash
