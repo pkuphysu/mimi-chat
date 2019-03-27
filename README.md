@@ -6,15 +6,15 @@ Websocket server based on Node.js
 ## Install
 ```bash
 # Clone this repository
-git clone https://github.com/stevenjoezhang/michat-server.git
+git clone https://github.com/stevenjoezhang/mimi-chat.git
 # Go into the repository
-cd michat-server
+cd mimi-chat
 # Install dependencies
 npm install
 ```
 **Note**: Run `npm install` to install dependency packges:
 - [nodejs-websocket](https://github.com/sitegui/nodejs-websocket)
-- [websockets](https://github.com/websockets/ws/blob/master/doc/ws.md)
+- [websockets](https://github.com/websockets/ws)
 
 ## Run
 ```bash

@@ -1,5 +1,5 @@
 /*
- * Michat Server
+ * Mimi Chat
  * Created by Shuqiao Zhang in 2018.
  * https://zhangshuqiao.org
  */
