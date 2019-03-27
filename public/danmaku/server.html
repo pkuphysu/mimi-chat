@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="user-scalable=no, viewport-fit=cover"/>
+<title>Mimi弹幕服务端</title>
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<style>
+body {
+	background-attachment: fixed;
+	text-align: center;
+	font-family: Verdana, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+	min-width: 960px;
+}
+span {
+	color: #FFF;
+}
+</style>
+</head>
+<body>
+<div style="position: fixed; bottom: 20px; left: 20px; z-index: 100; opacity: 0.9;">
+	<img src="" style="width: 200px; border-radius: 20px;"/>
+	<br/>
+	<span>Mimi弹幕</span>
+	<br/>
+	<span id="channel"></span>
+</div>
+
+<script>
+/*
+ * Mimi Danmaku
+ * Created by Shuqiao Zhang in 2018.
+ * https://zhangshuqiao.org
+ */
+
+/* 
+ * This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ */
+
+var channel = prompt("请输入频道名称", "") || "default"; //只能由ASCII字符组成且不超过20个字符
+var reg1 = new RegExp(/[\x00-\xff]+/g);
+if (!reg1.test(channel)) channel = "default";
+document.getElementById("channel").innerHTML = "频道：" + channel;
+document.getElementsByTagName("img")[0].src = "https://api.galaxymimi.com/qrcode/?margin=3&text=https://galaxymimi.com/danmaku/?channel=" + channel;
+
+$(document).ready(function() {
+	$.ajax("/port", {
+		type: "get",
+		dataType: "text",
+		error: function(xhr, status, error) {
+			console.log("Error");
+		},
+		success: function(data, status, xhr) {
+			var port = data,
+				protocol = location.protocol == "https:" ? "wss:" : "ws:";
+			window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "danmaku" + userchannel);
+			wsinit();
+		}
+	});
+});
+
+function wsinit() {
+	ws.onopen = function() {
+		alert("系统消息：建立连接成功");
+	};
+
+	ws.onmessage = function(event) {
+		var msg = JSON.parse(event.data);
+		if (msg.type != "user") return;
+		var messageArray = msg.content.split("|");
+		console.log(messageArray);
+		output[index] = createDanmaku(messageArray[0], messageArray[1], messageArray[2]);
+		index++;
+	};
+
+	ws.onerror = function() {
+		listMsg("系统消息：连接失败，请刷新页面或退出重连");
+	};
+
+	ws.onclose = function() {
+		listMsg("系统消息：连接已断开，请刷新页面或退出重连");
+	};
+}
+
+var output = [];
+var index = 0;
+
+var canvas = document.createElement("canvas");
+var context = canvas.getContext("2d");
+document.body.appendChild(canvas);
+
+var availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
+Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
+canvas.style.cssText = `position: fixed; top: 0; left: 0; background-size: cover; background-image: url(${Bg}); z-index: -1;`;
+
+var W = window.innerWidth;
+var H = window.innerHeight;
+canvas.width = W;
+canvas.height = H;
+var fontSize = H / 10;
+
+var availableColor = ["orange", "red", "blue", "purple", "green", "white"];
+
+window.onresize = function() {
+	console.warn("WTF?");
+	W = window.innerWidth;
+	H = window.innerHeight;
+	canvas.width = W;
+	canvas.height = H;
+	fontSize = H / 10;
+}
+
+function createDanmaku(text, size, color) {
+	var danmaku = new Object();
+	danmaku.speed = (W / 500) * (Math.random() * 0.5 + 0.75);
+	danmaku.x = W;
+	danmaku.y = Math.random() * H * 4 / 5 + fontSize; //避免高度重复？
+	danmaku.text = text;
+	danmaku.size = fontSize * size;
+	var reg2 = new RegExp("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$");
+	if (reg2.test(color)) danmaku.color = color;
+	else danmaku.color = availableColor[Math.floor(Math.random() * availableColor.length)];
+	return danmaku;
+}
+
+function draw(obj) {
+	context.font = `700 ${obj.size}px Microsoft YaHei`;
+	context.fillStyle = obj.color;
+	context.fillText(obj.text, obj.x, obj.y);
+}
+
+function drawAll() {
+	context.clearRect(0, 0, W, H);
+	for (var i in output) {
+		draw(output[i]);
+		output[i].x -= output[i].speed;
+		if (output[i].x < -context.measureText(output[i].text).width) {
+			output.splice(i, 1);
+			console.log(i);
+		}
+	}
+	setTimeout(drawAll, 20);
+}
+
+drawAll();
+</script>
+</body>
+</html>

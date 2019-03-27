@@ -1,0 +1,6 @@
+{
+	"port": 9000,
+	"debug": false,
+	"multi_log": false,
+	"single_log": false
+}
