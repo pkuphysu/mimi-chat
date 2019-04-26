@@ -4,8 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
 <title>Mimi聊天</title>
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"/>
 </head>
 <body>
@@ -70,68 +68,56 @@
 </div>
 
 <script>
-var uname = randomName(); //存储用户名到全局变量，握手成功后发送给服务器
+var uname = ""; //存储用户名到全局变量，握手成功后发送给服务器
+randomName();
 
-$(document).ready(function() {
-	$.ajax("/port", {
-		type: "get",
-		dataType: "text",
-		error: function(xhr, status, error) {
-			console.log("Error");
-		},
-		success: function(data, status, xhr) {
-			var port = data,
-				protocol = location.protocol == "https:" ? "wss:" : "ws:";
-			window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "chat");
-			ws.onopen = function () {
-				document.getElementById("msg_list").innerHTML = "";
-				listMsg("系统消息：建立连接成功");
-			};
-
-			ws.onmessage = function (event) {
-				var msg = JSON.parse(event.data);
-				var sender;
-				switch (msg.type) {
-					case "system":
-						sender = "系统消息：在线人数";
-						document.getElementById("user_num").innerHTML = "当前在线：" + msg.user;
-						break;
-					case "user":
-						sender = msg.user + "：";
-						break;
-						return;
-				}
-				listMsg(sender + msg.content);
-			};
-
-			ws.onerror = function () {
-				document.getElementById("msg_list").innerHTML = "";
-				listMsg("系统消息：连接失败，请刷新或稍后再试");
-			};
-		}
+function randomName() {
+	fetch("https://api.galaxymimi.com/name/").then(response => {
+		return response.text();
+	}).then(data => {
+		document.getElementById("show_name").value = data;
+	}).catch(function(error) {
+		console.log("There has been a problem with your fetch operation: ", error.message);
+		document.getElementById("show_name").value = "蛤";
 	});
+}
+
+fetch("/port").then(response => {
+	return response.text();
+}).then(data => {
+	var port = data,
+		protocol = location.protocol == "https:" ? "wss:" : "ws:";
+	window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "chat");
+	ws.onopen = function () {
+		document.getElementById("msg_list").innerHTML = "";
+		listMsg("系统消息：建立连接成功");
+	};
+
+	ws.onmessage = function (event) {
+		var msg = JSON.parse(event.data);
+		var sender;
+		switch (msg.type) {
+			case "system":
+				sender = "系统消息：在线人数";
+				document.getElementById("user_num").innerHTML = "当前在线：" + msg.user;
+				break;
+			case "user":
+				sender = msg.user + "：";
+				break;
+				return;
+		}
+		listMsg(sender + msg.content);
+	};
+
+	ws.onerror = function () {
+		document.getElementById("msg_list").innerHTML = "";
+		listMsg("系统消息：连接失败，请刷新或稍后再试");
+	};
 });
 
 setInterval(function() {
 	if (ws) ws.send("ping");
 }, 30000);
-
-function randomName() {
-	var name;
-	$.ajax("https://api.galaxymimi.com/name/", {
-		type: "get",
-		async: false, //重要，确保获取了用户名之后再进行下一步，否则代码不会顺序执行
-		error: function(xhr, status, error) {
-			console.log("Error");
-			name = "蛤";
-		},
-		success: function(data, status, xhr) {
-			name = data;
-		}
-	});
-	document.getElementById("show_name").value = name;
-	return name;
-}
 
 function submit() {
 	uname = document.getElementById("show_name").value;
@@ -153,9 +139,10 @@ function send() {
 		alert("内容无效！");
 		return;
 	}
-	var msg = {"content": content.trim(), "user": uname};
+	var name = uname || document.getElementById("show_name").value;
+	var msg = {"content": content.trim(), "user": name};
 	sendMsg(msg);
-	$("#msg_box").val("");
+	document.getElementById("msg_box").value = "";
 	return true;
 }
 

@@ -4,7 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="user-scalable=no, viewport-fit=cover"/>
 <title>Mimi弹幕服务端</title>
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <style>
 body {
 	background-attachment: fixed;
@@ -51,20 +50,13 @@ if (!reg1.test(channel)) channel = "default";
 document.getElementById("channel").innerHTML = "频道：" + channel;
 document.getElementsByTagName("img")[0].src = "https://api.galaxymimi.com/qrcode/?margin=3&text=https://galaxymimi.com/danmaku/?channel=" + channel;
 
-$(document).ready(function() {
-	$.ajax("/port", {
-		type: "get",
-		dataType: "text",
-		error: function(xhr, status, error) {
-			console.log("Error");
-		},
-		success: function(data, status, xhr) {
-			var port = data,
-				protocol = location.protocol == "https:" ? "wss:" : "ws:";
-			window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "danmaku" + userchannel);
-			wsinit();
-		}
-	});
+fetch("/port").then(response => {
+	return response.text();
+}).then(data => {
+	var port = data,
+		protocol = location.protocol == "https:" ? "wss:" : "ws:";
+	window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "danmaku" + channel);
+	wsinit();
 });
 
 function wsinit() {

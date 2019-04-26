@@ -46,8 +46,8 @@ server.listen(port, () => {
 var logs = config.multi_log || config.single_log;
 console.log(`Thank you for using Michat WebSocket server. The server will run on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
-var WebSocketServer = require("ws").Server,
-	wss = new WebSocketServer({
+var WebSocket = require("ws"),
+	wss = new WebSocket.Server({
 		verifyClient: socketVerify, //可选，验证连接函数
 		clientTracking: true,
 		maxPayload: 1300, //50个unicode字符最大可能大小（Emoji表情“一家人”）
@@ -70,19 +70,18 @@ var count = [];
 wss.broadcast = (type, user, content, towhom) => {
 	var data = {"type": type, "user": user, "content": content};
 	var str = JSON.stringify(data);
-	wss.clients.forEach((client) => {
-		//console.log(client.protocol);
-		if (client.protocol == towhom) client.send(str);
+	wss.clients.forEach(client => {
+		if (client.readyState === WebSocket.OPEN && client.protocol == towhom) client.send(str);
 	});
 };
 //初始化
-wss.on("connection", (ws) => {
+wss.on("connection", ws => {
 	//protocol用来区分channel 其值与前面的 info.req.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
 	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
 	//发送消息
-	ws.on("message", (data) => {
+	ws.on("message", data => {
 		if (ws.banned || data == "ping") return;
 		ws.banned = true;
 		setTimeout(() => {
@@ -100,21 +99,16 @@ wss.on("connection", (ws) => {
 		});
 	});
 	//退出聊天
-	ws.on("close", (close) => {
+	ws.on("close", close => {
 		count[ws.protocol]--;
 		wss.broadcast("system", count[ws.protocol], "-1", ws.protocol);
 	});
 	//错误处理
-	ws.on("error", (error) => {
+	ws.on("error", error => {
 		if (config.debug) console.error("[ERROR] " + error);
 	});
 });
 
-wss.on("error", (error) => {
+wss.on("error", error => {
 	if (config.debug) console.error("[ERROR] " + error);
-});
-
-process.on("uncaughtException", (error) => {
-	if (config.debug) console.error("[FATAL ERROR] " + error);
-	//process.exit(); //不强制退出可能产生不可控问题
 });

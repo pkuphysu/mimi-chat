@@ -41,7 +41,7 @@ Server options (in `config.json`):
 | `multi_log`  | true / false    | write logs to different files accroading to the channel |
 | `single_log` | true / false    | write logs to a single file                             |
 
-Client (using jQuery, samples are in the `public` folder):
+Client (samples are in the `public` folder):
 ```javascript
 var ws = new WebSocket("ws://localhost:9000", headers = channel);
 //If you're using ssl, replace ws with wss
