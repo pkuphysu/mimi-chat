@@ -18,6 +18,6 @@
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
 		"express": "^4.16.4",
-		"ws": "^6.2.1"
+		"ws": "^7.0.0"
 	}
 }
