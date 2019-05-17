@@ -192,17 +192,6 @@ fetch("/port").then(response => {
 	wsinit();
 });
 
-function randomName() {
-	fetch("https://api.galaxymimi.com/name/").then(response => {
-		return response.text();
-	}).then(data => {
-		document.getElementById("show_name").value = data;
-	}).catch(function(error) {
-		console.log("There has been a problem with your fetch operation: ", error.message);
-		document.getElementById("show_name").value = "蛤";
-	});
-}
-
 function initial() {
 	document.getElementById("show_channel").value = userchannel;
 	document.getElementById("show_name").value = username;
@@ -270,10 +259,6 @@ function listMsg(data) {
 	var msg_list = document.getElementById("output");
 	msg_list.innerHTML += data + "\n";
 	msg_list.scrollTop = msg_list.scrollHeight;
-}
-
-function randomName() {
-	document.getElementById("show_name").value = randomName();
 }
 
 function submit() {
