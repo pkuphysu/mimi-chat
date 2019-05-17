@@ -26,10 +26,6 @@ Default config file is `config.json`. If you want to specify another config file
 ```bash
 node server.js /path/to/your/config.json
 ```
-or 
-```bash
-node server.js /path/to/your/config.json
-```
 
 ## Usage
 Server options (in `config.json`):
