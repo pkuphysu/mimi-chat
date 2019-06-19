@@ -61,3 +61,7 @@ ws.onerror = function() {
 ## License
 Released under the GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
+
+## Todo List
+- [ ] 支持发送图片
+- [ ] Gravatar头像
