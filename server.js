@@ -55,7 +55,9 @@ var WebSocket = require("ws"),
 	});
 
 function socketVerify(info) {
-	if (config.debug) console.log("[New User]", info.req.headers["sec-websocket-protocol"], info.origin, info.req.url, info.secure);
+	if (config.debug) {
+		console.log("[New User]", info.req.headers["sec-websocket-protocol"], info.origin, info.req.url, info.secure);
+	}
 	return true; //否则拒绝
 	//传入的info参数会包括这个连接的很多信息，可以在此处使用console.log(info)来查看和选择如何验证连接
 }
@@ -64,6 +66,12 @@ function timeStamp() {
 	var date = new Date().toISOString();
 	return date.slice(0, 10) + " " + date.slice(11, 19) + " ";
 }
+
+function debug(err) {
+	if (config.debug) {
+		console.error("[ERROR] " + err);
+	}
+}
 //count记录某个频道的人数
 var count = [];
 //广播
@@ -71,7 +79,9 @@ wss.broadcast = (type, user, content, towhom) => {
 	var data = {"type": type, "user": user, "content": content};
 	var str = JSON.stringify(data);
 	wss.clients.forEach(client => {
-		if (client.readyState === WebSocket.OPEN && client.protocol == towhom) client.send(str);
+		if (client.readyState === WebSocket.OPEN && client.protocol == towhom) {
+			client.send(str);
+		}
 	});
 };
 //初始化
@@ -82,7 +92,9 @@ wss.on("connection", ws => {
 	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
 	//发送消息
 	ws.on("message", data => {
-		if (ws.banned || data == "ping") return;
+		if (ws.banned || data == "ping") {
+			return;
+		}
 		ws.banned = true;
 		setTimeout(() => {
 			ws.banned = false;
@@ -90,13 +102,23 @@ wss.on("connection", ws => {
 		var msg = JSON.parse(data);
 		wss.broadcast("user", msg.user, msg.content, ws.protocol);
 		var msglist = msg.user + " " + msg.content;
-		if (config.debug) console.log("[New Message]", ws.protocol, msglist);
-		if (config.multi_log) fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", (err) => {
-			if (err && config.debug) console.error("[ERROR] Failed to write the log.");
-		});
-		if (config.single_log) fs.appendFile("logs/msg.logs", timeStamp() + ws.protocol + " " + msglist + "\n", (err) => {
-			if (err && config.debug) console.error("[ERROR] Failed to write the log.");
-		});
+		if (config.debug) {
+			console.log("[New Message]", ws.protocol, msglist);
+		}
+		if (config.multi_log) {
+			fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", (err) => {
+				if (err) {
+					debug("Failed to write the log.");
+				}
+			});
+		}
+		if (config.single_log) {
+			fs.appendFile("logs/msg.logs", timeStamp() + ws.protocol + " " + msglist + "\n", (err) => {
+				if (err) {
+					debug("Failed to write the log.");
+				}
+			});
+		}
 	});
 	//退出聊天
 	ws.on("close", close => {
@@ -105,10 +127,10 @@ wss.on("connection", ws => {
 	});
 	//错误处理
 	ws.on("error", error => {
-		if (config.debug) console.error("[ERROR] " + error);
+		debug(error);
 	});
 });
 
 wss.on("error", error => {
-	if (config.debug) console.error("[ERROR] " + error);
+	debug(error);
 });
