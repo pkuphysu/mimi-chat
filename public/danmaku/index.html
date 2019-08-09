@@ -172,7 +172,7 @@ var reg1 = new RegExp("|", "g");
 var reg2 = new RegExp(/\s/g);
 
 function randomName() {
-	fetch("https://api.galaxymimi.com/name/").then(response => {
+	fetch("https://api.pkupi.com/name/").then(response => {
 		return response.text();
 	}).then(data => {
 		document.getElementById("show_name").value = data;

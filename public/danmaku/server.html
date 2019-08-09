@@ -48,7 +48,7 @@ var channel = prompt("请输入频道名称", "") || "default"; //只能由ASCII
 var reg1 = new RegExp(/[\x00-\xff]+/g);
 if (!reg1.test(channel)) channel = "default";
 document.getElementById("channel").innerHTML = "频道：" + channel;
-document.getElementsByTagName("img")[0].src = "https://api.galaxymimi.com/qrcode/?margin=3&text=https://galaxymimi.com/danmaku/?channel=" + channel;
+document.getElementsByTagName("img")[0].src = "https://api.pkupi.com/qrcode/?margin=3&text=https://mimichat.herokuapp.com/danmaku/?channel=" + channel;
 
 fetch("/port").then(response => {
 	return response.text();
