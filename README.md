@@ -4,6 +4,7 @@
 Websocket server based on Node.js
 
 ## Install
+
 ```bash
 # Clone this repository
 git clone https://github.com/stevenjoezhang/mimi-chat.git
@@ -14,10 +15,11 @@ npm install
 ```
 
 ## Run
+
 ```bash
 npm start
 ```
-or 
+or
 ```bash
 node server.js
 ```
@@ -28,6 +30,7 @@ node server.js /path/to/your/config.json
 ```
 
 ## Usage
+
 Server options (in `config.json`):
 
 | Option       | Available value | Description                                             |
@@ -56,12 +59,15 @@ ws.onerror = function() {
 ```
 
 ## Credits
+
 * [Mimi](https://zhangshuqiao.org) Developer of this project.
 
 ## License
+
 Released under the GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
 
 ## Todo List
+
 - [ ] 支持发送图片
 - [ ] Gravatar头像
