@@ -14,10 +14,10 @@
 		"Michat",
 		"Websocket"
 	],
-	"author": "Mimi",
+	"author": "Mimi <stevenjoezhang@gmail.com> https://zhangshuqiao.org",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
 		"express": "^4.17.1",
-		"ws": "^7.1.1"
+		"ws": "^7.1.2"
 	}
 }
