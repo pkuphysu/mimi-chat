@@ -163,8 +163,7 @@ var userchannel = location.href.split("?channel=")[1] || localStorage.getItem("u
 var username = localStorage.getItem("username");
 if (!username) {
 	randomName();
-}
-else {
+} else {
 	document.getElementById("show_name").value = username;
 }
 

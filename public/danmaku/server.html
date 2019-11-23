@@ -69,7 +69,7 @@ function wsinit() {
 		if (msg.type != "user") return;
 		var messageArray = msg.content.split("|");
 		console.log(messageArray);
-		output[index] = createDanmaku(messageArray[0], messageArray[1], messageArray[2]);
+		output[index] = createDanmaku(...messageArray);
 		index++;
 	};
 
@@ -82,7 +82,7 @@ function wsinit() {
 	};
 }
 
-setInterval(function() {
+setInterval(() => {
 	if (ws) ws.send("ping");
 }, 30000);
 
@@ -115,15 +115,15 @@ window.onresize = function() {
 }
 
 function createDanmaku(text, size, color) {
-	var danmaku = new Object();
-	danmaku.speed = (W / 500) * (Math.random() * 0.5 + 0.75);
-	danmaku.x = W;
-	danmaku.y = Math.random() * H * 4 / 5 + fontSize; //避免高度重复？
-	danmaku.text = text;
-	danmaku.size = fontSize * size;
+	var danmaku = {
+		speed: (W / 500) * (Math.random() * 0.5 + 0.75),
+		x    : W,
+		y    : Math.random() * H * 4 / 5 + fontSize, //避免高度重复？
+		text : text,
+		size : fontSize * size
+	};
 	var reg2 = new RegExp("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$");
-	if (reg2.test(color)) danmaku.color = color;
-	else danmaku.color = availableColor[Math.floor(Math.random() * availableColor.length)];
+	danmaku.color = reg2.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)];
 	return danmaku;
 }
 
@@ -133,9 +133,9 @@ function draw(obj) {
 	context.fillText(obj.text, obj.x, obj.y);
 }
 
-function drawAll() {
+setInterval(() => {
 	context.clearRect(0, 0, W, H);
-	for (var i in output) {
+	for (let i in output) {
 		draw(output[i]);
 		output[i].x -= output[i].speed;
 		if (output[i].x < -context.measureText(output[i].text).width) {
@@ -143,10 +143,7 @@ function drawAll() {
 			console.log(i);
 		}
 	}
-	setTimeout(drawAll, 20);
-}
-
-drawAll();
+}, 20);
 </script>
 </body>
 </html>

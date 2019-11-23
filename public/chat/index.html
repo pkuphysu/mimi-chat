@@ -115,7 +115,7 @@ fetch("/port").then(response => {
 	};
 });
 
-setInterval(function() {
+setInterval(() => {
 	if (ws) ws.send("ping");
 }, 30000);
 
@@ -140,7 +140,10 @@ function send() {
 		return;
 	}
 	var name = uname || document.getElementById("show_name").value;
-	var msg = {"content": content.trim(), "user": name};
+	var msg = {
+		content: content.trim(),
+		user: name
+	};
 	sendMsg(msg);
 	document.getElementById("msg_box").value = "";
 	return true;
