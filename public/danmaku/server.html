@@ -135,14 +135,11 @@ function draw(obj) {
 
 setInterval(() => {
 	context.clearRect(0, 0, W, H);
-	for (let i in output) {
-		draw(output[i]);
-		output[i].x -= output[i].speed;
-		if (output[i].x < -context.measureText(output[i].text).width) {
-			output.splice(i, 1);
-			console.log(i);
-		}
-	}
+	output = output.filter(item => {
+		draw(item);
+		item.x -= item.speed;
+		return item.x >= -context.measureText(item.text).width;
+	});
 }, 20);
 </script>
 </body>
