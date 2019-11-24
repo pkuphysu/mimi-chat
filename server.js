@@ -50,7 +50,7 @@ var WebSocket = require("ws"),
 	wss = new WebSocket.Server({
 		verifyClient: socketVerify, //可选，验证连接函数
 		clientTracking: true,
-		maxPayload: 1300, //50个unicode字符最大可能大小（Emoji表情“一家人”）
+		maxPayload: 1300, //50个unicode字符最大可能大小（Emoji表情「一家人」）
 		server
 	});
 

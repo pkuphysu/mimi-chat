@@ -7,12 +7,19 @@
 <style>
 body {
 	background-attachment: fixed;
-	text-align: center;
 	font-family: Verdana, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
 	min-width: 960px;
+	text-align: center;
 }
 span {
-	color: #FFF;
+	color: white;
+}
+canvas {
+	background-size: cover;
+	left: 0;
+	position: fixed;
+	top: 0;
+	z-index: -1;
 }
 </style>
 </head>
@@ -95,7 +102,7 @@ document.body.appendChild(canvas);
 
 var availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
 Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
-canvas.style.cssText = `position: fixed; top: 0; left: 0; background-size: cover; background-image: url(${Bg}); z-index: -1;`;
+canvas.style.cssText = `background-image: url(${Bg});`;
 
 var W = window.innerWidth;
 var H = window.innerHeight;
