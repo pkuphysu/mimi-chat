@@ -82,12 +82,10 @@ function randomName() {
 	});
 }
 
-fetch("/port").then(response => {
-	return response.text();
-}).then(data => {
-	var port = data,
-		protocol = location.protocol == "https:" ? "wss:" : "ws:";
-	window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "chat");
+(function() {
+	var port = location.port,
+		protocol = location.protocol.replace("http", "ws");
+	window.ws = new WebSocket(`${protocol}//${window.location.hostname}${port ? ":" + port : ""}`, headers = "chat");
 	ws.onopen = function () {
 		document.getElementById("msg_list").innerHTML = "";
 		listMsg("系统消息：建立连接成功");
@@ -113,7 +111,7 @@ fetch("/port").then(response => {
 		document.getElementById("msg_list").innerHTML = "";
 		listMsg("系统消息：连接失败，请刷新或稍后再试");
 	};
-});
+})();
 
 setInterval(() => {
 	if (ws) ws.send("ping");

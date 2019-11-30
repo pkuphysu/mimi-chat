@@ -30,11 +30,6 @@ if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 var port = process.env.PORT || config.port;
 
 app.use(express.static(path.join(__dirname, "public")));
-app.get("/port", (req, res) => {
-	//Deploy to Heroku
-	var ans = process.env.PORT ? 443 : port;
-	res.end(ans.toString());
-});
 
 const http = require("http");
 const server = http.createServer(app);

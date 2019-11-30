@@ -181,15 +181,11 @@ function randomName() {
 	});
 }
 
-fetch("/port").then(response => {
-	return response.text();
-}).then(data => {
-	window.port = data;
-	window.protocol = location.protocol == "https:" ? "wss:" : "ws:";
-	initial();
-	window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "danmaku" + userchannel);
-	wsinit();
-});
+var port = location.port,
+	protocol = location.protocol.replace("http", "ws");
+initial();
+var ws = new WebSocket(`${protocol}//${window.location.hostname}${port ? ":" + port : ""}`, headers = "danmaku" + userchannel);
+wsinit();
 
 function initial() {
 	document.getElementById("show_channel").value = userchannel;

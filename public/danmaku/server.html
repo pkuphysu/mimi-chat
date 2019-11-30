@@ -57,14 +57,10 @@ if (!reg1.test(channel)) channel = "default";
 document.getElementById("channel").innerHTML = "频道：" + channel;
 document.getElementsByTagName("img")[0].src = "https://api.pkupi.com/qrcode/?margin=3&text=https://mimichat.herokuapp.com/danmaku/?channel=" + channel;
 
-fetch("/port").then(response => {
-	return response.text();
-}).then(data => {
-	var port = data,
-		protocol = location.protocol == "https:" ? "wss:" : "ws:";
-	window.ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "danmaku" + channel);
-	wsinit();
-});
+var port = location.port,
+	protocol = location.protocol.replace("http", "ws"),
+	ws = new WebSocket(`${protocol}//${window.location.hostname}${port ? ":" + port : ""}`, headers = "danmaku" + channel);
+wsinit();
 
 function wsinit() {
 	ws.onopen = function() {
