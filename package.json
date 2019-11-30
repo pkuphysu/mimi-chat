@@ -1,6 +1,6 @@
 {
 	"name": "mimi-chat",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Michat Server",
 	"main": "server.js",
 	"scripts": {

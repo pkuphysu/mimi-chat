@@ -160,7 +160,7 @@
  */
 
 var userchannel = location.href.split("?channel=")[1] || localStorage.getItem("userchannel") || "default";
-var username = localStorage.getItem("username");
+var username = localStorage.getItem("username") || "";
 if (!username) {
 	randomName();
 } else {
