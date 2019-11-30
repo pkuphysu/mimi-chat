@@ -61,7 +61,7 @@
 			<input class="form-control" type="text" id="show_name">
 		</div>
 		<div class="form-group">
-			<button class="btn btn-success" type="button" onclick="randomName()">随机</button>
+			<button class="btn btn-success" type="button" onclick="fetchName()">随机</button>
 			<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
 			<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
 		</div>
@@ -160,24 +160,25 @@
  */
 
 var userchannel = location.href.split("?channel=")[1] || localStorage.getItem("userchannel") || "default";
-var username = localStorage.getItem("username") || "";
-if (!username) {
-	randomName();
-} else {
-	document.getElementById("show_name").value = username;
-}
+var username = localStorage.getItem("username") || randomName();
 
 var reg1 = new RegExp("|", "g");
 var reg2 = new RegExp(/\s/g);
 
 function randomName() {
+	const prefixes = "Angry Baby Crazy Diligent Excited Fat Greedy Hungry Interesting Japanese Kind Little Magic Naïve Old Powerful Quiet Rich Superman THU Undefined Valuable Wifeless Xiangbuchulai Young Zombie".split(" ");
+	const names = "Alice Bob Carol Dave Eve Francis Grace Hans Isabella Jason Kate Louis Margaret Nathan Olivia Paul Queen Richard Susan Thomas Uma Vivian Winnie Xander Yasmine Zach".split(" ");
+	return [prefixes[Math.floor(Math.random() * prefixes.length)], names[Math.floor(Math.random() * names.length)]].join(" ");
+}
+
+function fetchName() {
 	fetch("https://api.pkupi.com/name/").then(response => {
 		return response.text();
 	}).then(data => {
 		document.getElementById("show_name").value = data;
-	}).catch(function(error) {
+	}).catch(error => {
 		console.log("There has been a problem with your fetch operation: ", error.message);
-		document.getElementById("show_name").value = "蛤";
+		document.getElementById("show_name").value = randomName();
 	});
 }
 
@@ -236,9 +237,10 @@ function send() {
 	var fontsize = document.getElementById("fontsize").value;
 	var fontcolor = document.getElementById("color").value;
 	if (document.getElementById("random").checked) fontcolor = 0;
-	var content = `${message.trim()}|${fontsize}|${fontcolor}`;
-	var name = username || document.getElementById("show_name").value;
-	var msg = {"content": content, "user": name};
+	var msg = {
+		content: `${message.trim()}|${fontsize}|${fontcolor}`,
+		user: username
+	};
 	sendMsg(msg);
 	document.getElementById("input").value = "";
 	return true;
