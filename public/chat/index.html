@@ -83,9 +83,8 @@ function randomName() {
 }
 
 (function() {
-	var port = location.port,
-		protocol = location.protocol.replace("http", "ws");
-	window.ws = new WebSocket(`${protocol}//${window.location.hostname}${port ? ":" + port : ""}`, headers = "chat");
+	var protocol = location.protocol.replace("http", "ws");
+	window.ws = new WebSocket(`${protocol}//${location.host}`, headers = "chat");
 	ws.onopen = function () {
 		document.getElementById("msg_list").innerHTML = "";
 		listMsg("系统消息：建立连接成功");

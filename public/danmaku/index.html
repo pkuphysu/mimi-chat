@@ -181,10 +181,9 @@ function randomName() {
 	});
 }
 
-var port = location.port,
-	protocol = location.protocol.replace("http", "ws");
+var protocol = location.protocol.replace("http", "ws");
 initial();
-var ws = new WebSocket(`${protocol}//${window.location.hostname}${port ? ":" + port : ""}`, headers = "danmaku" + userchannel);
+var ws = new WebSocket(`${protocol}//${location.host}`, headers = "danmaku" + userchannel);
 wsinit();
 
 function initial() {
@@ -266,7 +265,7 @@ function submit() {
 	}
 	if (channel != userchannel) {
 		ws.close();
-		ws = new WebSocket(`${protocol}//${window.location.hostname}:${port}`, headers = "danmaku" + channel);
+		ws = new WebSocket(`${protocol}//${location.host}`, headers = "danmaku" + channel);
 		wsinit();
 	}
 	alert("提交成功！");
