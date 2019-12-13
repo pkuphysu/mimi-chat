@@ -56,7 +56,7 @@ var channel = prompt("请输入频道名称", "") || "default"; //只能由ASCII
 var reg1 = new RegExp(/[\x00-\xff]+/g);
 if (!reg1.test(channel)) channel = "default";
 document.getElementById("channel").innerHTML = "频道：" + channel;
-QRCode.toDataURL("https://mimichat.herokuapp.com/danmaku/?channel=" + channel, (err, url) => {
+QRCode.toDataURL(`${location.origin}/danmaku/?channel=${channel}`, (err, url) => {
 	document.getElementsByTagName("img")[0].src = url;
 });
 
