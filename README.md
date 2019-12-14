@@ -1,6 +1,6 @@
 # Mimi Chat
 
-基于Node.js构建的Websocket服务器，支持ws和wss协议。  
+基于 Node.js 构建的 Websocket 服务器，支持 ws 和 wss 协议。  
 Websocket server based on Node.js
 
 ## Install
@@ -43,18 +43,18 @@ Server options (in `config.json`):
 Client (samples are in the `public` folder):
 ```javascript
 var ws = new WebSocket("ws://localhost:9000", headers = channel);
-//If you're using ssl, replace ws with wss
-//You can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
+// If you're using ssl, replace ws with wss
+// You can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
 ws.onopen = function() {
-	//Do something...
+	// Do something...
 };
 ws.onmessage = function(event) {
 	var msg = JSON.parse(event.data);
-	//You will receive msg.type and msg.content here
-	//Do something...
+	// You will receive msg.type and msg.content here
+	// Do something...
 };
 ws.onerror = function() {
-	//Do something...
+	// Do something...
 };
 ```
 
