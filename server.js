@@ -43,19 +43,10 @@ console.log(`Thank you for using Michat WebSocket server. The server will run on
 
 var WebSocket = require("ws"),
 	wss = new WebSocket.Server({
-		verifyClient: socketVerify, //可选，验证连接函数
 		clientTracking: true,
 		maxPayload: 1300, //50个unicode字符最大可能大小（Emoji表情「一家人」）
 		server
 	});
-
-function socketVerify(info) {
-	if (config.debug) {
-		console.log("[New User]", info.req.headers["sec-websocket-protocol"], info.origin, info.req.url, info.secure);
-	}
-	return true; //否则拒绝
-	//传入的info参数会包括这个连接的很多信息，可以在此处使用console.log(info)来查看和选择如何验证连接
-}
 
 function timeStamp() {
 	var date = new Date().toISOString();
@@ -79,9 +70,15 @@ wss.broadcast = (type, user, content, towhom) => {
 		}
 	});
 };
+
+server.on('upgrade', (request, socket, head) => {
+	if (config.debug) {
+		console.log("[New User]", request.headers["sec-websocket-protocol"], request.headers.origin, request.url);
+	}
+});
 //初始化
 wss.on("connection", ws => {
-	//protocol用来区分channel 其值与前面的 info.req.headers["sec-websocket-protocol"] 相同
+	//protocol用来区分channel 其值与前面的 request.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
 	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
