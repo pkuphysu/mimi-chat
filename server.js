@@ -20,6 +20,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const fs = require("fs");
 
 var config = require(process.argv[2] || "./config.json");
 
