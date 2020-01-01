@@ -16,7 +16,7 @@
  *  GNU General Public License for more details.
  */
 
-//https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
+// https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -38,14 +38,14 @@ server.listen(port, () => {
 	console.log("Server listening at port %d", port);
 });
 
-//控制台输出
+// 控制台输出
 var logs = config.multi_log || config.single_log;
 console.log(`Thank you for using Michat WebSocket server. The server will run on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
 var WebSocket = require("ws"),
 	wss = new WebSocket.Server({
 		clientTracking: true,
-		maxPayload: 1300, //50个unicode字符最大可能大小（Emoji表情「一家人」）
+		maxPayload: 1300, // 50 个 Unicode 字符最大可能大小（Emoji 表情「一家人」）
 		server
 	});
 
@@ -59,9 +59,9 @@ function debug(err) {
 		console.error("[ERROR] " + err);
 	}
 }
-//count记录某个频道的人数
+// count 记录某个频道的人数
 var count = [];
-//广播
+// 广播
 wss.broadcast = (type, user, content, towhom) => {
 	var data = {"type": type, "user": user, "content": content};
 	var str = JSON.stringify(data);
@@ -79,11 +79,11 @@ server.on('upgrade', (request, socket, head) => {
 });
 //初始化
 wss.on("connection", ws => {
-	//protocol用来区分channel 其值与前面的 request.headers["sec-websocket-protocol"] 相同
+	// protocol 用来区分 channel 其值与前面的 request.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
 	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
-	//发送消息
+	// 发送消息
 	ws.on("message", data => {
 		if (ws.banned || data == "ping") {
 			return;
@@ -91,7 +91,7 @@ wss.on("connection", ws => {
 		ws.banned = true;
 		setTimeout(() => {
 			ws.banned = false;
-		}, 3000); //避免刷屏
+		}, 3000); // 避免刷屏
 		var msg = JSON.parse(data);
 		wss.broadcast("user", msg.user, msg.content, ws.protocol);
 		var msglist = msg.user + " " + msg.content;
@@ -99,26 +99,26 @@ wss.on("connection", ws => {
 			console.log("[New Message]", ws.protocol, msglist);
 		}
 		if (config.multi_log) {
-			fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", (err) => {
+			fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", err => {
 				if (err) {
 					debug("Failed to write the log.");
 				}
 			});
 		}
 		if (config.single_log) {
-			fs.appendFile("logs/msg.logs", timeStamp() + ws.protocol + " " + msglist + "\n", (err) => {
+			fs.appendFile("logs/msg.logs", timeStamp() + ws.protocol + " " + msglist + "\n", err => {
 				if (err) {
 					debug("Failed to write the log.");
 				}
 			});
 		}
 	});
-	//退出聊天
+	// 退出聊天
 	ws.on("close", close => {
 		count[ws.protocol]--;
 		wss.broadcast("system", count[ws.protocol], "-1", ws.protocol);
 	});
-	//错误处理
+	// 错误处理
 	ws.on("error", error => {
 		debug(error);
 	});
