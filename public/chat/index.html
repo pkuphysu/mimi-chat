@@ -72,7 +72,7 @@ var uname = ""; //存储用户名到全局变量，握手成功后发送给服�
 randomName();
 
 function randomName() {
-	fetch("https://api.pkupi.com/name/").then(response => {
+	fetch("/name/").then(response => {
 		return response.text();
 	}).then(data => {
 		document.getElementById("show_name").value = data;

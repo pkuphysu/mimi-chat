@@ -21,6 +21,12 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const fs = require("fs");
+const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt")).toString().split("\n");
+const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().split("\n");
+
+function randomName() {
+	return adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
+}
 
 var config = require(process.argv[2] || "./config.json");
 
@@ -31,6 +37,9 @@ if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 var port = process.env.PORT || config.port;
 
 app.use(express.static(path.join(__dirname, "public")));
+app.get("/name/", (req, res) => {
+	res.end(randomName());
+});
 
 const http = require("http");
 const server = http.createServer(app);
