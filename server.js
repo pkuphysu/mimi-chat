@@ -32,7 +32,7 @@ var config = require(process.argv[2] || "./config.json");
 
 if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
-	config.port = 9000;
+	config.port = 8080;
 }
 var port = process.env.PORT || config.port;
 

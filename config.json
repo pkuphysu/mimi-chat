@@ -1,5 +1,5 @@
 {
-	"port": 9000,
+	"port": 8080,
 	"debug": false,
 	"multi_log": false,
 	"single_log": false
