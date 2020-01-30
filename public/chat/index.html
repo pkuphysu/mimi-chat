@@ -27,42 +27,43 @@
 			</ul>
 		</div>
 	</div>
-</div>	
+</div>
 
 <div class="container">
-	<div class="col-md-9">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="panel-title" id="title">
-					Mimi在线聊天室
+	<div class="row">
+		<div class="col-md-9">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="panel-title" id="title">
+						Mimi在线聊天室
+					</div>
+				</div>
+				<textarea id="msg_list" style="width: 100%; height: 400px; font-size: large; resize: none;" readonly="readonly">
+				</textarea>
+				<div class="form-inline">
+					<div class="input-group">
+						<div class="input-group-addon" style="width: 1%;">消息</div>
+						<input type="text" class="form-control" id="msg_box" onkeydown="checkKey(event)">
+						<div class="input-group-addon" onclick="send()" style="width: 1%;">发送</div>
+					</div>
 				</div>
 			</div>
-			<textarea id="msg_list" style="width: 100%; height: 400px; font-size: large;" readonly="readonly">
-			</textarea>
-
-			<div class="form-inline">
-				<div class="input-group">
-					<div class="input-group-addon" style="width: 1%;">消息</div>
-					<input type="text" class="form-control" id="msg_box" onkeydown="checkKey(event)">
-					<div class="input-group-addon" onclick="send()" style="width: 1%;">发送</div>
-				</div>
+		</div>
+		<div class="col-md-3 text-center">
+			<h1 id="user_num">当前在线：0</h1>
+			<div class="form-group">
+				<label for="show_channel">频道</label>
+				<input class="form-control" type="text" id="show_channel" disabled="disabled">
 			</div>
-		</div>
-	</div>
-	<div class="col-md-3 text-center">
-		<h1 id="user_num">当前在线：0</h1>
-		<div class="form-group">
-			<label for="show_channel">频道</label>
-			<input class="form-control" type="text" id="show_channel" disabled="disabled">
-		</div>
-		<div class="form-group">
-			<label for="show_name">用户名</label>
-			<input class="form-control" type="text" id="show_name">
-		</div>
-		<div class="form-group">
-			<button class="btn btn-success" type="button" onclick="randomName()">随机</button>
-			<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
-			<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
+			<div class="form-group">
+				<label for="show_name">用户名</label>
+				<input class="form-control" type="text" id="show_name">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-success" type="button" onclick="randomName()">随机</button>
+				<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
+				<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
+			</div>
 		</div>
 	</div>
 </div>

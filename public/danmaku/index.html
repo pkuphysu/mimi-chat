@@ -30,111 +30,113 @@
 </div>
 
 <div class="container">
-	<div class="col-md-9">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="panel-title" id="title">
-					Mimi弹幕客户端
+	<div class="row">
+		<div class="col-md-9">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="panel-title" id="title">
+						Mimi弹幕客户端
+					</div>
+				</div>
+				<textarea id="output" style="width: 100%; height: 400px; font-size: large; resize: none;" readonly="readonly">
+				</textarea>
+
+				<div class="form-inline">
+					<div class="input-group">
+						<div class="input-group-addon" style="width: 1%;">弹幕</div>
+						<input type="text" class="form-control" id="input" maxlength="50" placeholder="输入弹幕内容，按下回车或点击发送" onkeydown="checkKey(event)" style="color: #94070A">
+						<div class="input-group-addon" onclick="send()" style="width: 1%;">发送</div>
+					</div>
 				</div>
 			</div>
-			<textarea id="output" style="width: 100%; height: 400px; font-size: large;" readonly="readonly">
-			</textarea>
+		</div>
 
-			<div class="form-inline">
-				<div class="input-group">
-					<div class="input-group-addon" style="width: 1%;">弹幕</div>
-					<input type="text" class="form-control" id="input" maxlength="50" placeholder="输入弹幕内容，按下回车或点击发送" onkeydown="checkKey(event)" style="color: #94070A">
-					<div class="input-group-addon" onclick="send()" style="width: 1%;">发送</div>
-				</div>
+		<div class="col-md-3 text-center">
+			<h1 id="user_num">当前在线：0</h1>
+			<div class="form-group">
+				<label for="show_channel">频道</label>
+				<input class="form-control" type="text" id="show_channel">
+			</div>
+			<div class="form-group">
+				<label for="show_name">用户名</label>
+				<input class="form-control" type="text" id="show_name">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-success" type="button" onclick="fetchName()">随机</button>
+				<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
+				<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
+			</div>
+			<div class="form-group">
+				<label for="color">弹幕颜色</label>
+				<input class="form-control" type="color" id="color" maxlength="7" size="7" width="100" value="#94070A" onchange="changeColor()" onkeyup="changeColor()">
+			</div>
+			<div class="form-group">
+				<input class="custom-control-input" id="random" type="checkbox" onchange="changeColor()">
+				<label for="random">使用随机颜色</label>
+			</div>
+			<div class="form-group">
+				<label>弹幕大小</label>
+				<select class="form-control" id="fontsize">
+					<option value="0.8">小</option>
+					<option value="1" selected="selected">中</option>
+					<option value="1.2">大</option>
+					<option value="1.5">最大</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<input class="custom-control-input" id="ignore" type="checkbox" checked>
+				<label for="ignore">忽略系统消息</label>
 			</div>
 		</div>
 	</div>
-
-	<div class="col-md-3 text-center">
-		<h1 id="user_num">当前在线：0</h1>
-		<div class="form-group">
-			<label for="show_channel">频道</label>
-			<input class="form-control" type="text" id="show_channel">
-		</div>
-		<div class="form-group">
-			<label for="show_name">用户名</label>
-			<input class="form-control" type="text" id="show_name">
-		</div>
-		<div class="form-group">
-			<button class="btn btn-success" type="button" onclick="fetchName()">随机</button>
-			<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
-			<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
-		</div>
-		<div class="form-group">
-			<label for="color">弹幕颜色</label>
-			<input class="form-control" type="color" id="color" maxlength="7" size="7" width="100" value="#94070A" onchange="changeColor()" onkeyup="changeColor()">
-		</div>
-		<div class="form-group">
-			<input class="custom-control-input" id="random" type="checkbox" onchange="changeColor()">
-			<label for="random">使用随机颜色</label>
-		</div>
-		<div class="form-group">
-			<label>弹幕大小</label>
-			<select class="form-control" id="fontsize">
-				<option value="0.8">小</option>
-				<option value="1" selected="selected">中</option>
-				<option value="1.2">大</option>
-				<option value="1.5">最大</option>
-			</select>
-		</div>
-		<div class="form-group">
-			<input class="custom-control-input" id="ignore" type="checkbox" checked/>
-			<label for="ignore">忽略系统消息</label>
-		</div>
-	</div>
-</div>
-
-<div class="container">
-	<div class="col-md-8">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="panel-title">
-					公告
+	<div class="row">
+		<div class="col-md-8">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="panel-title">
+						公告
+					</div>
 				</div>
-			</div>
-			<div class="panel-body">
-			欢迎使用米米弹幕——由Mimi独立研发的领先的线上弹幕系统。请先阅读帮助：
-			<br>
-			弹幕内容：本系统支持所有Unicode字符及Emoji表情。
-			<br>
-			频道：同一频道内的用户可以看到其他人发出的弹幕，不同频道不互通。
-			<br>
-			用户名：可以随机生成，也可以手动输入。更改频道或用户名后请点击「提交」以使新配置生效。
-			<br>
-			弹幕颜色：弹幕颜色默认为北大红。部分浏览器可能不支持拾色器功能，请手动输入RGB颜色（以#开头，3位或6位十六进制数字），例如#66FFCC或者#FFF。颜色留空、不符合规范或勾选了「使用随机颜色」，将采用随机颜色。
-			<br>
-			系统消息：如果有用户离开或加入频道，系统会发出消息提醒。如果勾选了「忽略系统消息」，将不会显示这些信息。
-			<br>
-			弹幕审核：弹幕没有审核，但会被记录在案，若出现违反包括但不限于中华人民共和国相关法律、法规和政策的内容，将提交有关部门处理。
-			<br>
-			防刷屏机制：弹幕长度限制为50个字符；发送弹幕后会有长为3s的CD，在此期间发送的弹幕不会被显示。
-			<br>
-			免责声明：除这段文字外，本页面任何内容均与本站无任何关联，本站管理员不对其承担任何法律责任。所有用户言论均不代表本站立场。
-			</div>
-			<div class="panel-footer">
-				做了一点微小的工作
-			</div>
-		</div>
-	</div>
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<div class="panel-title">
-					氪金
-				</div>
-			</div>
-			<div class="panel-body">
-				目前所有功能都是免费的，尽情享受吧！
+				<div class="panel-body">
+				欢迎使用米米弹幕——由Mimi独立研发的领先的线上弹幕系统。请先阅读帮助：
 				<br>
-				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				弹幕内容：本系统支持所有Unicode字符及Emoji表情。
+				<br>
+				频道：同一频道内的用户可以看到其他人发出的弹幕，不同频道不互通。
+				<br>
+				用户名：可以随机生成，也可以手动输入。更改频道或用户名后请点击「提交」以使新配置生效。
+				<br>
+				弹幕颜色：弹幕颜色默认为北大红。部分浏览器可能不支持拾色器功能，请手动输入RGB颜色（以#开头，3位或6位十六进制数字），例如#66FFCC或者#FFF。颜色留空、不符合规范或勾选了「使用随机颜色」，将采用随机颜色。
+				<br>
+				系统消息：如果有用户离开或加入频道，系统会发出消息提醒。如果勾选了「忽略系统消息」，将不会显示这些信息。
+				<br>
+				弹幕审核：弹幕没有审核，但会被记录在案，若出现违反包括但不限于中华人民共和国相关法律、法规和政策的内容，将提交有关部门处理。
+				<br>
+				防刷屏机制：弹幕长度限制为50个字符；发送弹幕后会有长为3s的CD，在此期间发送的弹幕不会被显示。
+				<br>
+				免责声明：除这段文字外，本页面任何内容均与本站无任何关联，本站管理员不对其承担任何法律责任。所有用户言论均不代表本站立场。
+				</div>
+				<div class="panel-footer">
+					做了一点微小的工作
+				</div>
 			</div>
-			<div class="panel-footer">
-				你们搞的这个啊，Excited！
+		</div>
+
+		<div class="col-md-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="panel-title">
+						氪金
+					</div>
+				</div>
+				<div class="panel-body">
+					目前所有功能都是免费的，尽情享受吧！
+					<br>
+					Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				</div>
+				<div class="panel-footer">
+					你们搞的这个啊，Excited！
+				</div>
 			</div>
 		</div>
 	</div>
