@@ -72,7 +72,7 @@ function debug(err) {
 var count = [];
 // 广播
 wss.broadcast = (type, user, content, towhom) => {
-	var data = {"type": type, "user": user, "content": content};
+	var data = { type, user, content };
 	var str = JSON.stringify(data);
 	wss.clients.forEach(client => {
 		if (client.readyState === WebSocket.OPEN && client.protocol == towhom) {
