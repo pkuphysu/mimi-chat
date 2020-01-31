@@ -127,7 +127,7 @@ function cancel() {
 }
 
 function checkKey(event) {
-	return event.keyCode == 13 ? send() : false;
+	return event.key === "Enter" ? send() : false;
 }
 
 function send() {
