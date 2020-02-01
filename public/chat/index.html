@@ -95,14 +95,15 @@ function randomName() {
 
 	ws.onmessage = function (event) {
 		var msg = JSON.parse(event.data);
+		if (!msg.meta) return;
 		var sender;
-		switch (msg.type) {
+		switch (msg.from) {
 			case "system":
 				sender = "系统消息：在线人数";
-				document.getElementById("user_num").innerHTML = "当前在线：" + msg.user;
+				document.getElementById("user_num").innerHTML = "当前在线：" + msg.meta.count;
 				break;
 			case "user":
-				sender = msg.user + "：";
+				sender = msg.meta.user + "：";
 				break;
 				return;
 		}
@@ -140,18 +141,15 @@ function send() {
 		return;
 	}
 	var name = uname || document.getElementById("show_name").value;
-	var msg = {
-		content: content.trim(),
-		user: name
-	};
-	sendMsg(msg);
+	var data = JSON.stringify({
+		meta: {
+			user: name
+		},
+		content: content.trim()
+	});
+	ws.send(data);
 	document.getElementById("msg_box").value = "";
 	return true;
-}
-
-function sendMsg(msg) {
-	var data = JSON.stringify(msg);
-	ws.send(data);
 }
 
 function listMsg(data) {

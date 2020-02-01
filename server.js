@@ -71,11 +71,11 @@ function debug(err) {
 // count 记录某个频道的人数
 var count = [];
 // 广播
-wss.broadcast = (type, user, content, towhom) => {
-	var data = { type, user, content };
+wss.broadcast = (from, meta, content, towhom) => {
+	var data = { from, meta, content };
 	var str = JSON.stringify(data);
 	wss.clients.forEach(client => {
-		if (client.readyState === WebSocket.OPEN && client.protocol == towhom) {
+		if (client.readyState === WebSocket.OPEN && client.protocol === towhom) {
 			client.send(str);
 		}
 	});
@@ -91,19 +91,18 @@ wss.on("connection", ws => {
 	// protocol 用来区分 channel 其值与前面的 request.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
-	wss.broadcast("system", count[ws.protocol], "+1", ws.protocol);
+	wss.broadcast("system", { count: count[ws.protocol] }, "+1", ws.protocol);
 	// 发送消息
 	ws.on("message", data => {
-		if (ws.banned || data == "ping") {
-			return;
-		}
+		if (ws.banned || data === "ping") return;
 		ws.banned = true;
 		setTimeout(() => {
 			ws.banned = false;
 		}, 3000); // 避免刷屏
 		var msg = JSON.parse(data);
-		wss.broadcast("user", msg.user, msg.content, ws.protocol);
-		var msglist = msg.user + " " + msg.content;
+		if (!msg.meta) return;
+		wss.broadcast("user", msg.meta, msg.content, ws.protocol);
+		var msglist = msg.meta.user + " " + msg.content;
 		if (config.debug) {
 			console.log("[New Message]", ws.protocol, msglist);
 		}
@@ -125,7 +124,7 @@ wss.on("connection", ws => {
 	// 退出聊天
 	ws.on("close", close => {
 		count[ws.protocol]--;
-		wss.broadcast("system", count[ws.protocol], "-1", ws.protocol);
+		wss.broadcast("system", { count: count[ws.protocol] }, "-1", ws.protocol);
 	});
 	// 错误处理
 	ws.on("error", error => {

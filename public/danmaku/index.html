@@ -206,13 +206,14 @@ function wsinit() {
 
 	ws.onmessage = function(event) {
 		var msg = JSON.parse(event.data);
-		switch (msg.type) {
+		if (!msg.meta) return;
+		switch (msg.from) {
 			case "system":
 				if (!document.getElementById("ignore").checked) listMsg("系统消息：在线人数" + msg.content);
-				document.getElementById("user_num").innerHTML = "当前在线：" + msg.user;
+				document.getElementById("user_num").innerHTML = "当前在线：" + msg.meta.count;
 				break;
 			case "user":
-				listMsg(msg.user + "：" + msg.content.split("|")[0]);
+				listMsg(msg.meta.user + "：" + msg.content);
 				break;
 				return;
 		}
@@ -241,18 +242,17 @@ function send() {
 	var fontsize = document.getElementById("fontsize").value;
 	var fontcolor = document.getElementById("color").value;
 	if (document.getElementById("random").checked) fontcolor = 0;
-	var msg = {
-		content: `${message.trim()}|${fontsize}|${fontcolor}`,
-		user: username
-	};
-	sendMsg(msg);
+	var data = JSON.stringify({
+		meta: {
+			user: username,
+			size: fontsize,
+			color: fontcolor
+		},
+		content: message.trim()
+	});
+	ws.send(data);
 	document.getElementById("input").value = "";
 	return true;
-}
-
-function sendMsg(msg) {
-	var data = JSON.stringify(msg);
-	ws.send(data);
 }
 
 function listMsg(data) {

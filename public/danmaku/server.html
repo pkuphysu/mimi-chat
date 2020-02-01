@@ -71,11 +71,11 @@ function wsinit() {
 
 	ws.onmessage = function(event) {
 		var msg = JSON.parse(event.data);
-		if (msg.type != "user") return;
-		var messageArray = msg.content.split("|");
+		if (!msg.meta) return;
+		if (msg.from !== "user") return;
+		var messageArray = [msg.content, msg.meta.size, msg.meta.color];
 		console.log(messageArray);
-		output[index] = createDanmaku(...messageArray);
-		index++;
+		output.push(createDanmaku(...messageArray));
 	};
 
 	ws.onerror = function() {
@@ -92,7 +92,6 @@ setInterval(() => {
 }, 30000);
 
 var output = [];
-var index = 0;
 
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
