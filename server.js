@@ -24,25 +24,21 @@ const fs = require("fs");
 const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt")).toString().split("\n");
 const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().split("\n");
 
-function randomName() {
-	return adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
-}
+app.use(express.static(path.join(__dirname, "public")));
+app.get("/name/", (req, res) => {
+	let randomName = adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
+	res.end(randomName);
+});
+
+const http = require("http");
+const server = http.createServer(app);
 
 var config = require(process.argv[2] || "./config.json");
-
 if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
 	config.port = 8080;
 }
 var port = process.env.PORT || config.port;
-
-app.use(express.static(path.join(__dirname, "public")));
-app.get("/name/", (req, res) => {
-	res.end(randomName());
-});
-
-const http = require("http");
-const server = http.createServer(app);
 server.listen(port, () => {
 	console.log("Server listening at port %d", port);
 });
@@ -59,7 +55,7 @@ var WebSocket = require("ws"),
 	});
 
 function timeStamp() {
-	var date = new Date().toISOString();
+	let date = new Date().toISOString();
 	return date.slice(0, 10) + " " + date.slice(11, 19) + " ";
 }
 
@@ -72,16 +68,15 @@ function debug(err) {
 var count = [];
 // 广播
 wss.broadcast = (from, meta, content, towhom) => {
-	var data = { from, meta, content };
-	var str = JSON.stringify(data);
+	let data = JSON.stringify({ from, meta, content });
 	wss.clients.forEach(client => {
 		if (client.readyState === WebSocket.OPEN && client.protocol === towhom) {
-			client.send(str);
+			client.send(data);
 		}
 	});
 };
 
-server.on('upgrade', (request, socket, head) => {
+server.on("upgrade", (request, socket, head) => {
 	if (config.debug) {
 		console.log("[New User]", request.headers["sec-websocket-protocol"], request.headers.origin, request.url);
 	}
@@ -99,10 +94,10 @@ wss.on("connection", ws => {
 		setTimeout(() => {
 			ws.banned = false;
 		}, 3000); // 避免刷屏
-		var msg = JSON.parse(data);
+		let msg = JSON.parse(data);
 		if (!msg.meta) return;
 		wss.broadcast("user", msg.meta, msg.content, ws.protocol);
-		var msglist = msg.meta.user + " " + msg.content;
+		let msglist = msg.meta.user + " " + msg.content;
 		if (config.debug) {
 			console.log("[New Message]", ws.protocol, msglist);
 		}
