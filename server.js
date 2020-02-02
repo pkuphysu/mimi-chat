@@ -21,6 +21,8 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
+const chalk = require("chalk");
 const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt")).toString().split("\n");
 const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().split("\n");
 
@@ -40,12 +42,21 @@ if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 }
 var port = process.env.PORT || config.port;
 server.listen(port, () => {
-	console.log("Server listening at port %d", port);
+	console.log(chalk.yellow("Server available on:"));
+	const ifaces = os.networkInterfaces();
+	Object.keys(ifaces).forEach(dev => {
+		ifaces[dev].forEach(details => {
+			if (details.family === 'IPv4') {
+				console.log((`  http://${details.address}:${chalk.green(port.toString())}`));
+			}
+		});
+	});
+	console.log("Hit CTRL-C to stop the server");
 });
 
 // 控制台输出
 var logs = config.multi_log || config.single_log;
-console.log(`Thank you for using Michat WebSocket server. The server will run on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
+console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
 var WebSocket = require("ws"),
 	wss = new WebSocket.Server({

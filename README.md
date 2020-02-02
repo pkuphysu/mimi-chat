@@ -1,6 +1,6 @@
 # Mimi Chat
 
-基于 Node.js 构建的 Websocket 服务器，支持 ws 和 wss 协议。  
+基于 Node.js 构建的 Websocket 实时消息服务器，支持 ws 和 wss 协议。  
 Websocket server based on Node.js
 
 ## Install
@@ -33,12 +33,12 @@ node server.js /path/to/your/config.json
 
 Server options (in `config.json`):
 
-| Option       | Available value | Description                                             |
-|--------------|-----------------|---------------------------------------------------------|
-| `port`       | integer         | set the listening port (default: 9000)                  |
-| `debug`      | true / false    | show logs in the console in order to debug              |
-| `multi_log`  | true / false    | write logs to different files accroading to the channel |
-| `single_log` | true / false    | write logs to a single file                             |
+| Option       | Available values | Description                                             |
+|--------------|------------------|---------------------------------------------------------|
+| `port`       | integer          | Set the listening port (default: 9000)                  |
+| `debug`      | true / false     | Show logs in the console in order to debug              |
+| `multi_log`  | true / false     | Write logs to different files accroading to the channel |
+| `single_log` | true / false     | Write logs to a single file                             |
 
 Client (samples are in the `public` folder):
 ```javascript
