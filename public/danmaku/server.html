@@ -123,7 +123,7 @@ function createDanmaku(text, size, color) {
 		speed: (W / 500) * (Math.random() * 0.5 + 0.75),
 		x    : W,
 		y    : Math.random() * H * 4 / 5 + fontSize, //避免高度重复？
-		text : text,
+		text,
 		size : fontSize * size
 	};
 	var reg2 = new RegExp("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$");
