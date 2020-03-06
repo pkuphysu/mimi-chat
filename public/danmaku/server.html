@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="user-scalable=no, viewport-fit=cover">
 <title>Mimi弹幕服务端</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <style>
 body {
 	background-attachment: fixed;
@@ -32,6 +31,7 @@ canvas {
 	<br>
 	<span id="channel"></span>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <script>
 /*
@@ -93,36 +93,31 @@ setInterval(() => {
 
 var output = [];
 
-var canvas = document.createElement("canvas");
-var context = canvas.getContext("2d");
+const canvas = document.createElement("canvas");
+const context = canvas.getContext("2d");
 document.body.appendChild(canvas);
 
-var availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
-Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
+const availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
+const Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
 canvas.style.cssText = `background-image: url(${Bg});`;
 
-var W = window.innerWidth;
-var H = window.innerHeight;
-canvas.width = W;
-canvas.height = H;
-var fontSize = H / 10;
+const availableColor = ["orange", "red", "blue", "purple", "green", "white"];
 
-var availableColor = ["orange", "red", "blue", "purple", "green", "white"];
+function resize() {
+	canvas.width = window.innerWidth
+	canvas.height = window.innerHeight;
+};
 
-window.onresize = function() {
-	console.warn("WTF?");
-	W = window.innerWidth;
-	H = window.innerHeight;
-	canvas.width = W;
-	canvas.height = H;
-	fontSize = H / 10;
-}
+window.onresize = resize;
+
+resize();
 
 function createDanmaku(text, size, color) {
+	let fontSize = canvas.height / 10;
 	var danmaku = {
-		speed: (W / 500) * (Math.random() * 0.5 + 0.75),
-		x    : W,
-		y    : Math.random() * H * 4 / 5 + fontSize, //避免高度重复？
+		speed: (canvas.width / 500) * (Math.random() * 0.5 + 0.75),
+		x    : canvas.width,
+		y    : Math.random() * canvas.height * 4 / 5 + fontSize, //避免高度重复？
 		text,
 		size : fontSize * size
 	};
@@ -138,7 +133,7 @@ function draw(obj) {
 }
 
 setInterval(() => {
-	context.clearRect(0, 0, W, H);
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	output = output.filter(item => {
 		draw(item);
 		item.x -= item.speed;
