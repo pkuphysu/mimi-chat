@@ -138,8 +138,7 @@ function checkKey(event) {
 
 function send() {
 	var content = document.getElementById("msg_box").value;
-	var reg = new RegExp(/\s/g);
-	if (!content.replace(reg, "")) {
+	if (!content.replace(/\s/g, "")) {
 		alert("内容无效！");
 		return;
 	}

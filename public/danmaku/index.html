@@ -167,9 +167,6 @@
 var userchannel = location.href.split("?channel=")[1] || localStorage.getItem("userchannel") || "default";
 var username = localStorage.getItem("username") || randomName();
 
-var reg1 = new RegExp("|", "g");
-var reg2 = new RegExp(/\s/g);
-
 function randomName() {
 	const prefixes = "Angry Baby Crazy Diligent Excited Fat Greedy Hungry Interesting Japanese Kind Little Magic Naïve Old Powerful Quiet Rich Superman THU Undefined Valuable Wifeless Xiangbuchulai Young Zombie".split(" ");
 	const names = "Alice Bob Carol Dave Eve Francis Grace Hans Isabella Jason Kate Louis Margaret Nathan Olivia Paul Queen Richard Susan Thomas Uma Vivian Winnie Xander Yasmine Zach".split(" ");
@@ -225,7 +222,7 @@ function wsinit() {
 	};
 
 	ws.onclose = function() {
-		listMsg("系统消息：连接已断开，请刷新页面或退出重连");
+		listMsg("系统消息：连接已断开");
 	};
 }
 
@@ -238,8 +235,8 @@ function checkKey(event) {
 }
 
 function send() {
-	var message = document.getElementById("input").value.replace(reg1, "");
-	if (!message.replace(reg2, "")) return;
+	var message = document.getElementById("input").value;
+	if (!message.replace(/\s/g, "")) return;
 	var fontsize = document.getElementById("fontsize").value;
 	var fontcolor = document.getElementById("color").value;
 	if (document.getElementById("random").checked) fontcolor = 0;
@@ -263,14 +260,14 @@ function listMsg(data) {
 }
 
 function submit() {
-	var channel = document.getElementById("show_channel").value.replace(reg2, "");
-	var name = document.getElementById("show_name").value.replace(reg2, "");
+	var channel = document.getElementById("show_channel").value.replace(/\W/g, "");
+	var name = document.getElementById("show_name").value.replace(/\s/g, "");
 	if (!channel || !name) {
-		alert("用户名和频道不能为空！");
+		alert("无效的用户名或频道！");
 		cancel();
 		return;
 	}
-	if (channel != userchannel) {
+	if (channel !== userchannel) {
 		ws.close();
 		ws = new WebSocket(`${protocol}//${location.host}`, headers = "danmaku" + channel);
 		wsinit();

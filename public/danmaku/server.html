@@ -52,9 +52,7 @@ canvas {
  *  GNU General Public License for more details.
  */
 
-var channel = prompt("请输入频道名称", "") || "default"; //只能由ASCII字符组成且不超过20个字符
-var reg1 = new RegExp(/[\x00-\xff]+/g);
-if (!reg1.test(channel)) channel = "default";
+var channel = prompt("请输入频道名称", "").replace(/\W/g, "") || "default"; //只能由ASCII字符组成且不超过20个字符
 document.getElementById("channel").innerHTML = "频道：" + channel;
 QRCode.toDataURL(`${location.origin}/danmaku/?channel=${channel}`, (err, url) => {
 	document.getElementsByTagName("img")[0].src = url;
@@ -83,7 +81,7 @@ function wsinit() {
 	};
 
 	ws.onclose = function() {
-		listMsg("系统消息：连接已断开，请刷新页面或退出重连");
+		listMsg("系统消息：连接已断开");
 	};
 }
 
@@ -121,8 +119,8 @@ function createDanmaku(text, size, color) {
 		text,
 		size : fontSize * size
 	};
-	var reg2 = new RegExp("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$");
-	danmaku.color = reg2.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)];
+	var reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
+	danmaku.color = reg.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)];
 	return danmaku;
 }
 
