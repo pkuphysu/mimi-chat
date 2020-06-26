@@ -52,14 +52,14 @@ canvas {
  *  GNU General Public License for more details.
  */
 
-var channel = prompt("请输入频道名称", "").replace(/\W/g, "") || "default"; //只能由ASCII字符组成且不超过20个字符
+let channel = prompt("请输入频道名称", "").replace(/\W/g, "") || "default"; //只能由ASCII字符组成且不超过20个字符
 document.getElementById("channel").innerHTML = "频道：" + channel;
 QRCode.toDataURL(`${location.origin}/danmaku/?channel=${channel}`, (err, url) => {
 	document.getElementsByTagName("img")[0].src = url;
 });
 
-var protocol = location.protocol.replace("http", "ws"),
-	ws = new WebSocket(`${protocol}//${location.host}`, headers = "danmaku" + channel);
+let protocol = location.protocol.replace("http", "ws"),
+	ws = new WebSocket(`${protocol}//${location.host}`, "danmaku" + channel);
 wsinit();
 
 function wsinit() {
@@ -68,10 +68,10 @@ function wsinit() {
 	};
 
 	ws.onmessage = function(event) {
-		var msg = JSON.parse(event.data);
+		let msg = JSON.parse(event.data);
 		if (!msg.meta) return;
 		if (msg.from !== "user") return;
-		var messageArray = [msg.content, msg.meta.size, msg.meta.color];
+		let messageArray = [msg.content, msg.meta.size, msg.meta.color];
 		console.log(messageArray);
 		output.push(createDanmaku(...messageArray));
 	};
@@ -89,7 +89,7 @@ setInterval(() => {
 	if (ws) ws.send("ping");
 }, 30000);
 
-var output = [];
+let output = [];
 
 const canvas = document.createElement("canvas");
 const context = canvas.getContext("2d");
@@ -112,14 +112,14 @@ resize();
 
 function createDanmaku(text, size, color) {
 	let fontSize = canvas.height / 10;
-	var danmaku = {
+	let danmaku = {
 		speed: (canvas.width / 500) * (Math.random() * 0.5 + 0.75),
 		x    : canvas.width,
 		y    : Math.random() * canvas.height * 4 / 5 + fontSize, //避免高度重复？
 		text,
 		size : fontSize * size
 	};
-	var reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
+	let reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
 	danmaku.color = reg.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)];
 	return danmaku;
 }

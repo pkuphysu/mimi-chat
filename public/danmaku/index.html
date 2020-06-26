@@ -164,8 +164,8 @@
  *  GNU General Public License for more details.
  */
 
-var userchannel = location.href.split("?channel=")[1] || localStorage.getItem("userchannel") || "default";
-var username = localStorage.getItem("username") || randomName();
+let userchannel = location.href.split("?channel=")[1] || localStorage.getItem("userchannel") || "default";
+let username = localStorage.getItem("username") || randomName();
 
 function randomName() {
 	const prefixes = "Angry Baby Crazy Diligent Excited Fat Greedy Hungry Interesting Japanese Kind Little Magic Naïve Old Powerful Quiet Rich Superman THU Undefined Valuable Wifeless Xiangbuchulai Young Zombie".split(" ");
@@ -184,9 +184,9 @@ function fetchName() {
 	});
 }
 
-var protocol = location.protocol.replace("http", "ws");
+let protocol = location.protocol.replace("http", "ws");
 initial();
-var ws = new WebSocket(`${protocol}//${location.host}`, headers = "danmaku" + userchannel);
+let ws = new WebSocket(`${protocol}//${location.host}`, "danmaku" + userchannel);
 wsinit();
 
 function initial() {
@@ -203,7 +203,7 @@ function wsinit() {
 	};
 
 	ws.onmessage = function(event) {
-		var msg = JSON.parse(event.data);
+		let msg = JSON.parse(event.data);
 		if (!msg.meta) return;
 		switch (msg.from) {
 			case "system":
@@ -235,12 +235,12 @@ function checkKey(event) {
 }
 
 function send() {
-	var message = document.getElementById("input").value;
+	let message = document.getElementById("input").value;
 	if (!message.replace(/\s/g, "")) return;
-	var fontsize = document.getElementById("fontsize").value;
-	var fontcolor = document.getElementById("color").value;
+	let fontsize = document.getElementById("fontsize").value;
+	let fontcolor = document.getElementById("color").value;
 	if (document.getElementById("random").checked) fontcolor = 0;
-	var data = JSON.stringify({
+	let data = JSON.stringify({
 		meta: {
 			user: username,
 			size: fontsize,
@@ -254,14 +254,14 @@ function send() {
 }
 
 function listMsg(data) {
-	var msg_list = document.getElementById("output");
+	let msg_list = document.getElementById("output");
 	msg_list.innerHTML += data + "\n";
 	msg_list.scrollTop = msg_list.scrollHeight;
 }
 
 function submit() {
-	var channel = document.getElementById("show_channel").value.replace(/\W/g, "");
-	var name = document.getElementById("show_name").value.replace(/\s/g, "");
+	let channel = document.getElementById("show_channel").value.replace(/\W/g, "");
+	let name = document.getElementById("show_name").value.replace(/\s/g, "");
 	if (!channel || !name) {
 		alert("无效的用户名或频道！");
 		cancel();
@@ -269,7 +269,7 @@ function submit() {
 	}
 	if (channel !== userchannel) {
 		ws.close();
-		ws = new WebSocket(`${protocol}//${location.host}`, headers = "danmaku" + channel);
+		ws = new WebSocket(`${protocol}//${location.host}`, "danmaku" + channel);
 		wsinit();
 	}
 	alert("提交成功！");
@@ -285,7 +285,7 @@ function cancel() {
 }
 
 function changeColor() {
-	var fontcolor = document.getElementById("color").value;
+	let fontcolor = document.getElementById("color").value;
 	if (document.getElementById("random").checked) fontcolor = "#000";
 	document.getElementById("input").style.color = fontcolor;
 }

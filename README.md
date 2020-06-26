@@ -42,7 +42,7 @@ Server options (in `config.json`):
 
 Client (samples are in the `public` folder):
 ```javascript
-var ws = new WebSocket("ws://localhost:9000", headers = channel);
+var ws = new WebSocket("ws://localhost:9000", channel);
 // If you're using ssl, replace ws with wss
 // You can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
 ws.onopen = function() {

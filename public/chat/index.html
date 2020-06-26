@@ -74,7 +74,7 @@
 </div>
 
 <script>
-var uname = ""; //存储用户名到全局变量，握手成功后发送给服务器
+let uname = ""; //存储用户名到全局变量，握手成功后发送给服务器
 randomName();
 
 function randomName() {
@@ -89,17 +89,17 @@ function randomName() {
 }
 
 (function() {
-	var protocol = location.protocol.replace("http", "ws");
-	window.ws = new WebSocket(`${protocol}//${location.host}`, headers = "chat");
+	let protocol = location.protocol.replace("http", "ws");
+	window.ws = new WebSocket(`${protocol}//${location.host}`, "chat");
 	ws.onopen = function () {
 		document.getElementById("msg_list").innerHTML = "";
 		listMsg("系统消息：建立连接成功");
 	};
 
 	ws.onmessage = function (event) {
-		var msg = JSON.parse(event.data);
+		let msg = JSON.parse(event.data);
 		if (!msg.meta) return;
-		var sender;
+		let sender;
 		switch (msg.from) {
 			case "system":
 				sender = "系统消息：在线人数";
@@ -137,13 +137,13 @@ function checkKey(event) {
 }
 
 function send() {
-	var content = document.getElementById("msg_box").value;
+	let content = document.getElementById("msg_box").value;
 	if (!content.replace(/\s/g, "")) {
 		alert("内容无效！");
 		return;
 	}
-	var name = uname || document.getElementById("show_name").value;
-	var data = JSON.stringify({
+	let name = uname || document.getElementById("show_name").value;
+	let data = JSON.stringify({
 		meta: {
 			user: name
 		},
@@ -155,7 +155,7 @@ function send() {
 }
 
 function listMsg(data) {
-	var msg_list = document.getElementById("msg_list");
+	let msg_list = document.getElementById("msg_list");
 	msg_list.innerHTML += data + "\n";
 	msg_list.scrollTop = msg_list.scrollHeight;
 }
