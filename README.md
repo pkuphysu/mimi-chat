@@ -33,23 +33,23 @@ node server.js /path/to/your/config.json
 
 Server options (in `config.json`):
 
-| Option       | Available values | Description                                             |
-|--------------|------------------|---------------------------------------------------------|
-| `port`       | integer          | Set the listening port (default: 9000)                  |
-| `debug`      | true / false     | Show logs in the console in order to debug              |
-| `multi_log`  | true / false     | Write logs to different files accroading to the channel |
-| `single_log` | true / false     | Write logs to a single file                             |
+| Option       | Type    | Description                                             |
+|--------------|---------|---------------------------------------------------------|
+| `port`       | Integer | Set the listening port (default: 9000)                  |
+| `debug`      | Boolean | Show logs in the console in order to debug              |
+| `multi_log`  | Boolean | Write logs to different files accroading to the channel |
+| `single_log` | Boolean | Write logs to a single file                             |
 
 Client (samples are in the `public` folder):
 ```javascript
-var ws = new WebSocket("ws://localhost:9000", channel);
+let ws = new WebSocket("ws://localhost:9000", channel);
 // If you're using ssl, replace ws with wss
 // You can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
 ws.onopen = function() {
 	// Do something...
 };
 ws.onmessage = function(event) {
-	var msg = JSON.parse(event.data);
+	let msg = JSON.parse(event.data);
 	// You will receive msg.type and msg.content here
 	// Do something...
 };
