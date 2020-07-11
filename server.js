@@ -35,12 +35,12 @@ app.get("/name/", (req, res) => {
 const http = require("http");
 const server = http.createServer(app);
 
-var config = require(process.argv[2] || "./config.json");
+const config = require(process.argv[2] || "./config.json");
 if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
 	config.port = 8080;
 }
-var port = process.env.PORT || config.port;
+const port = process.env.PORT || config.port;
 server.listen(port, () => {
 	console.log(chalk.yellow("Server available on:"));
 	const ifaces = os.networkInterfaces();
@@ -55,10 +55,10 @@ server.listen(port, () => {
 });
 
 // 控制台输出
-var logs = config.multi_log || config.single_log;
+const logs = config.multi_log || config.single_log;
 console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
-var WebSocket = require("ws"),
+const WebSocket = require("ws"),
 	wss = new WebSocket.Server({
 		clientTracking: true,
 		maxPayload: 1300, // 50 个 Unicode 字符最大可能大小（Emoji 表情「一家人」）
@@ -76,7 +76,7 @@ function debug(err) {
 	}
 }
 // count 记录某个频道的人数
-var count = [];
+const count = [];
 // 广播
 wss.broadcast = (from, meta, content, towhom) => {
 	let data = JSON.stringify({ from, meta, content });
@@ -130,7 +130,9 @@ wss.on("connection", ws => {
 	// 退出聊天
 	ws.on("close", close => {
 		count[ws.protocol]--;
-		wss.broadcast("system", { count: count[ws.protocol] }, "-1", ws.protocol);
+		wss.broadcast("system", {
+			count: count[ws.protocol]
+		}, "-1", ws.protocol);
 	});
 	// 错误处理
 	ws.on("error", error => {

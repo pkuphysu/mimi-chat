@@ -14,7 +14,7 @@
 		"Michat",
 		"Websocket"
 	],
-	"author": "Mimi <stevenjoezhang@gmail.com> https://zhangshuqiao.org",
+	"author": "Mimi <stevenjoezhang@gmail.com> (https://zhangshuqiao.org)",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
 		"chalk": "^4.0.0",
