@@ -28,7 +28,7 @@ const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().s
 
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/name/", (req, res) => {
-	let randomName = adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
+	const randomName = adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
 	res.end(randomName);
 });
 
@@ -66,7 +66,7 @@ const WebSocket = require("ws"),
 	});
 
 function timeStamp() {
-	let date = new Date().toISOString();
+	const date = new Date().toISOString();
 	return date.slice(0, 10) + " " + date.slice(11, 19) + " ";
 }
 
@@ -78,14 +78,14 @@ function debug(err) {
 // count 记录某个频道的人数
 const count = [];
 // 广播
-wss.broadcast = (from, meta, content, towhom) => {
-	let data = JSON.stringify({ from, meta, content });
+function broadcast(from, meta, content, towhom) {
+	const data = JSON.stringify({ from, meta, content });
 	wss.clients.forEach(client => {
 		if (client.readyState === WebSocket.OPEN && client.protocol === towhom) {
 			client.send(data);
 		}
 	});
-};
+}
 
 server.on("upgrade", (request, socket, head) => {
 	if (config.debug) {
@@ -97,7 +97,7 @@ wss.on("connection", ws => {
 	// protocol 用来区分 channel 其值与前面的 request.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
-	wss.broadcast("system", { count: count[ws.protocol] }, "+1", ws.protocol);
+	broadcast("system", { count: count[ws.protocol] }, "+1", ws.protocol);
 	// 发送消息
 	ws.on("message", data => {
 		if (ws.banned || data === "ping") return;
@@ -105,10 +105,15 @@ wss.on("connection", ws => {
 		setTimeout(() => {
 			ws.banned = false;
 		}, 3000); // 避免刷屏
-		let msg = JSON.parse(data);
-		if (!msg.meta) return;
-		wss.broadcast("user", msg.meta, msg.content, ws.protocol);
-		let msglist = msg.meta.user + " " + msg.content;
+		const msg = JSON.parse(data);
+		if (!msg.meta) {
+			if (config.debug) {
+				console.log("[Invalid Message]", ws.protocol, msg.content);
+			}
+			return;
+		}
+		broadcast("user", msg.meta, msg.content, ws.protocol);
+		const msglist = msg.meta.user + " " + msg.content;
 		if (config.debug) {
 			console.log("[New Message]", ws.protocol, msglist);
 		}
@@ -130,7 +135,7 @@ wss.on("connection", ws => {
 	// 退出聊天
 	ws.on("close", close => {
 		count[ws.protocol]--;
-		wss.broadcast("system", {
+		broadcast("system", {
 			count: count[ws.protocol]
 		}, "-1", ws.protocol);
 	});

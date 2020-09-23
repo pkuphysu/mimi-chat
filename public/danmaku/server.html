@@ -68,10 +68,10 @@ function wsinit() {
 	};
 
 	ws.onmessage = function(event) {
-		let msg = JSON.parse(event.data);
+		const msg = JSON.parse(event.data);
 		if (!msg.meta) return;
 		if (msg.from !== "user") return;
-		let messageArray = [msg.content, msg.meta.size, msg.meta.color];
+		const messageArray = [msg.content, msg.meta.size, msg.meta.color];
 		console.log(messageArray);
 		output.push(createDanmaku(...messageArray));
 	};

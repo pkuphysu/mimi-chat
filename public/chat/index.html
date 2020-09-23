@@ -89,7 +89,7 @@ function randomName() {
 }
 
 (function() {
-	let protocol = location.protocol.replace("http", "ws");
+	const protocol = location.protocol.replace("http", "ws");
 	window.ws = new WebSocket(`${protocol}//${location.host}`, "chat");
 	ws.onopen = function () {
 		document.getElementById("msg_list").innerHTML = "";
@@ -97,7 +97,7 @@ function randomName() {
 	};
 
 	ws.onmessage = function (event) {
-		let msg = JSON.parse(event.data);
+		const msg = JSON.parse(event.data);
 		if (!msg.meta) return;
 		let sender;
 		switch (msg.from) {
@@ -137,13 +137,13 @@ function checkKey(event) {
 }
 
 function send() {
-	let content = document.getElementById("msg_box").value;
+	const content = document.getElementById("msg_box").value;
 	if (!content.replace(/\s/g, "")) {
 		alert("内容无效！");
 		return;
 	}
-	let name = uname || document.getElementById("show_name").value;
-	let data = JSON.stringify({
+	const name = uname || document.getElementById("show_name").value;
+	const data = JSON.stringify({
 		meta: {
 			user: name
 		},
