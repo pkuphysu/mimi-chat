@@ -17,53 +17,37 @@
  */
 
 // https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
-const express = require("express");
-const app = express();
+const MiServer = require("mimi-server");
 const path = require("path");
+
+const config = require(process.argv[2] || "./config.json");
+
+const port = process.env.PORT || config.port;
+
+const { app, server } = new MiServer({
+	port,
+	static: path.join(__dirname, "public")
+});
+
 const fs = require("fs");
-const os = require("os");
-const chalk = require("chalk");
 const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt")).toString().split("\n");
 const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().split("\n");
 
-app.use(express.static(path.join(__dirname, "public")));
 app.get("/name/", (req, res) => {
 	const randomName = adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
 	res.end(randomName);
-});
-
-const http = require("http");
-const server = http.createServer(app);
-
-const config = require(process.argv[2] || "./config.json");
-if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
-	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
-	config.port = 8080;
-}
-const port = process.env.PORT || config.port;
-server.listen(port, () => {
-	console.log(chalk.yellow("Server available on:"));
-	const ifaces = os.networkInterfaces();
-	Object.keys(ifaces).forEach(dev => {
-		ifaces[dev].forEach(details => {
-			if (details.family === 'IPv4') {
-				console.log((`  http://${details.address}:${chalk.green(port.toString())}`));
-			}
-		});
-	});
-	console.log("Hit CTRL-C to stop the server");
 });
 
 // 控制台输出
 const logs = config.multi_log || config.single_log;
 console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
-const WebSocket = require("ws"),
-	wss = new WebSocket.Server({
-		clientTracking: true,
-		maxPayload: 1300, // 50 个 Unicode 字符最大可能大小（Emoji 表情「一家人」）
-		server
-	});
+const WebSocket = require("ws");
+const wss = new WebSocket.Server({
+	clientTracking: true,
+	maxPayload: 1300, // 50 个 Unicode 字符最大可能大小（Emoji 表情「一家人」）
+	server
+});
 
 function timeStamp() {
 	const date = new Date().toISOString();
