@@ -76,6 +76,9 @@
 <script>
 let uname = ""; //存储用户名到全局变量，握手成功后发送给服务器
 randomName();
+const serverUrl = new URL("../", window.location);
+serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
+let ws = wsinit(serverUrl, "chat");
 
 function randomName() {
 	fetch("/name/").then(response => {
@@ -88,9 +91,12 @@ function randomName() {
 	});
 }
 
-(function() {
-	const protocol = location.protocol.replace("http", "ws");
-	window.ws = new WebSocket(`${protocol}//${location.host}`, "chat");
+function wsinit() {
+	const ws = new WebSocket(...arguments);
+	const timer = setInterval(() => {
+		ws.send("ping");
+	}, 30000);
+
 	ws.onopen = function () {
 		document.getElementById("msg_list").innerHTML = "";
 		listMsg("系统消息：建立连接成功");
@@ -117,11 +123,13 @@ function randomName() {
 		document.getElementById("msg_list").innerHTML = "";
 		listMsg("系统消息：连接失败，请刷新或稍后再试");
 	};
-})();
 
-setInterval(() => {
-	if (ws) ws.send("ping");
-}, 30000);
+	ws.onclose = function () {
+		clearInterval(timer);
+	};
+
+	return ws;
+}
 
 function submit() {
 	uname = document.getElementById("show_name").value;

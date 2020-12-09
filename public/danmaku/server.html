@@ -57,13 +57,17 @@ document.getElementById("channel").innerHTML = "频道：" + channel;
 
 QRCode.toDataURL((new URL(`.?channel=${channel}`, window.location)).href, (err, url) => {
 	document.querySelector("img").src = url;
-})
+});
 const serverUrl = new URL("../", window.location);
 serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
-let ws = new WebSocket(serverUrl, "danmaku" + channel);
-wsinit();
+wsinit(serverUrl, "danmaku" + channel);
 
 function wsinit() {
+	const ws = new WebSocket(...arguments);
+	const timer = setInterval(() => {
+		ws.send("ping");
+	}, 30000);
+
 	ws.onopen = function() {
 		alert("系统消息：建立连接成功");
 	};
@@ -83,12 +87,11 @@ function wsinit() {
 
 	ws.onclose = function() {
 		listMsg("系统消息：连接已断开");
+		clearInterval(timer);
 	};
-}
 
-setInterval(() => {
-	if (ws) ws.send("ping");
-}, 30000);
+	return ws;
+}
 
 let output = [];
 
@@ -105,7 +108,7 @@ const availableColor = ["orange", "red", "blue", "purple", "green", "white"];
 function resize() {
 	canvas.width = window.innerWidth
 	canvas.height = window.innerHeight;
-};
+}
 
 window.onresize = resize;
 

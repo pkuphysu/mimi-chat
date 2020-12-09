@@ -187,8 +187,7 @@ function fetchName() {
 initial();
 const serverUrl = new URL("../", window.location);
 serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
-let ws = new WebSocket(serverUrl, "danmaku" + userchannel);
-wsinit();
+let ws = wsinit(serverUrl, "danmaku" + userchannel);
 
 function initial() {
 	document.getElementById("show_channel").value = userchannel;
@@ -199,6 +198,11 @@ function initial() {
 }
 
 function wsinit() {
+	const ws = new WebSocket(...arguments);
+	const timer = setInterval(() => {
+		ws.send("ping");
+	}, 30000);
+
 	ws.onopen = function() {
 		listMsg("系统消息：建立连接成功");
 	};
@@ -224,12 +228,11 @@ function wsinit() {
 
 	ws.onclose = function() {
 		listMsg("系统消息：连接已断开");
+		clearInterval(timer);
 	};
-}
 
-setInterval(() => {
-	if (ws) ws.send("ping");
-}, 30000);
+	return ws;
+}
 
 function checkKey(event) {
 	return event.key === "Enter" ? send() : false;
@@ -269,13 +272,12 @@ function submit() {
 		return;
 	}
 	if (channel !== userchannel) {
+		userchannel = channel;
 		ws.close();
-		ws = new WebSocket(`${protocol}//${location.host}`, "danmaku" + channel);
-		wsinit();
+		ws = wsinit(serverUrl, "danmaku" + userchannel);
 	}
 	alert("提交成功！");
 	username = name;
-	userchannel = channel;
 	localStorage.setItem("username", username);
 	localStorage.setItem("userchannel", userchannel);
 }
