@@ -54,12 +54,13 @@ canvas {
 
 let channel = prompt("请输入频道名称", "").replace(/\W/g, "") || "default"; //只能由ASCII字符组成且不超过20个字符
 document.getElementById("channel").innerHTML = "频道：" + channel;
-QRCode.toDataURL(`${location.origin}/danmaku/?channel=${channel}`, (err, url) => {
-	document.querySelector("img").src = url;
-});
 
-let protocol = location.protocol.replace("http", "ws"),
-	ws = new WebSocket(`${protocol}//${location.host}`, "danmaku" + channel);
+QRCode.toDataURL((new URL(`.?channel=${channel}`, window.location)).href, (err, url) => {
+	document.querySelector("img").src = url;
+})
+const serverUrl = new URL("../", window.location);
+serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
+let ws = new WebSocket(serverUrl, "danmaku" + channel);
 wsinit();
 
 function wsinit() {
