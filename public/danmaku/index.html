@@ -185,7 +185,7 @@ function fetchName() {
 }
 
 initial();
-const serverUrl = new URL("../", document.location)
+const serverUrl = new URL("../", window.location);
 serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
 let ws = new WebSocket(serverUrl, "danmaku" + userchannel);
 wsinit();
