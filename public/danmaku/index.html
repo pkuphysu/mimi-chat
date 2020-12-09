@@ -174,7 +174,7 @@ function randomName() {
 }
 
 function fetchName() {
-	fetch("/name/").then(response => {
+	fetch("../name/").then(response => {
 		return response.text();
 	}).then(data => {
 		document.getElementById("show_name").value = data;
@@ -184,9 +184,10 @@ function fetchName() {
 	});
 }
 
-const protocol = location.protocol.replace("http", "ws");
 initial();
-let ws = new WebSocket(`${protocol}//${location.host}`, "danmaku" + userchannel);
+const serverUrl = new URL("../", document.location)
+serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
+let ws = new WebSocket(serverUrl, "danmaku" + userchannel);
 wsinit();
 
 function initial() {
