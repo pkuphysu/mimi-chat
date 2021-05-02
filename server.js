@@ -17,10 +17,14 @@
  */
 
 // https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
-const MiServer = require("mimi-server");
-const path = require("path");
+import MiServer from "mimi-server";
 
-const config = require(process.argv[2] || "./config.json");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const config = JSON.parse(fs.readFileSync(process.argv[2] || "./config.json"));
 
 const port = process.env.PORT || config.port;
 
@@ -29,7 +33,6 @@ const { app, server } = new MiServer({
 	static: path.join(__dirname, "public")
 });
 
-const fs = require("fs");
 const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt")).toString().split("\n");
 const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().split("\n");
 
@@ -42,7 +45,7 @@ app.get("/name/", (req, res) => {
 const logs = config.multi_log || config.single_log;
 console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
-const WebSocket = require("ws");
+import WebSocket from "ws";
 const wss = new WebSocket.Server({
 	clientTracking: true,
 	maxPayload: 1300, // 50 个 Unicode 字符最大可能大小（Emoji 表情「一家人」）

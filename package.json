@@ -4,6 +4,7 @@
   "private": true,
   "description": "Michat Server",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
