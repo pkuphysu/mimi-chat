@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0">
 <title>Mimi 弹幕</title>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css">
 <style>
-.form-inline .input-group {
-	width: 100%;
+.form-check .form-check-input {
+	float: none;
+}
+.form-control-color {
+	max-width: unset;
 }
 </style>
 </head>
@@ -19,15 +21,15 @@
 		<a class="navbar-brand" href="/">
 			米米弹幕
 		</a>
-		<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navBar">
+		<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navBar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navBar">
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item"><a class="nav-link" href="/" target="_blank">首页</a></li>
-				<li class="nav-item"><a class="nav-link" href="/chat/" target="_blank">聊天</a></li>
-				<li class="nav-item"><a class="nav-link" href="https://github.com/stevenjoezhang/mimi-chat" target="_blank">开源</a></li>
-			</ul>
+			<div class="navbar-nav ms-auto">
+				<a class="nav-link" href="/" target="_blank">首页</a>
+				<a class="nav-link" href="/chat/" target="_blank">聊天</a>
+				<a class="nav-link" href="https://github.com/stevenjoezhang/mimi-chat" target="_blank">开源</a>
+			</div>
 		</div>
 	</div>
 </div>
@@ -41,58 +43,52 @@
 						Mimi 弹幕客户端
 					</div>
 				</div>
-				<textarea id="output" style="width: 100%; height: 400px; font-size: large; resize: none;" readonly="readonly">
+				<textarea id="output" class="form-control" style="width: 100%; height: 400px; font-size: large; resize: none;" readonly="readonly">
 				</textarea>
 
-				<div class="form-inline">
-					<div class="input-group">
-						<div class="input-group-prepend">
-							<span class="input-group-text">弹幕</span>
-						</div>
-						<input type="text" class="form-control" id="input" maxlength="50" placeholder="输入弹幕内容，按下回车或点击发送" onkeydown="checkKey(event)" style="color: #94070A">
-						<div class="input-group-append">
-							<button type="button" class="btn btn-primary" onclick="send()">发送</button>
-						</div>
-					</div>
+				<div class="input-group">
+					<span class="input-group-text">弹幕</span>
+					<input type="text" class="form-control" id="input" maxlength="50" placeholder="输入弹幕内容，按下回车或点击发送" onkeydown="checkKey(event)" style="color: #94070A">
+					<button type="button" class="btn btn-primary" onclick="send()">发送</button>
 				</div>
 			</div>
 		</div>
 
 		<div class="col-md-3 text-center mb-4">
 			<h1 id="user_num">当前在线：0</h1>
-			<div class="form-group">
+			<div class="mb-3">
 				<label for="show_channel">频道</label>
 				<input class="form-control" type="text" id="show_channel">
 			</div>
-			<div class="form-group">
+			<div class="mb-3">
 				<label for="show_name">用户名</label>
 				<input class="form-control" type="text" id="show_name">
 			</div>
-			<div class="form-group">
+			<div class="mb-3">
 				<button class="btn btn-success" type="button" onclick="fetchName()">随机</button>
 				<button class="btn btn-primary" type="button" onclick="submit()">提交</button>
 				<button class="btn btn-danger" type="button" onclick="cancel()">取消</button>
 			</div>
-			<div class="form-group">
+			<div class="mb-3">
 				<label for="color">弹幕颜色</label>
-				<input class="form-control" type="color" id="color" maxlength="7" size="7" width="100" value="#94070A" onchange="changeColor()" onkeyup="changeColor()">
+				<input class="form-control form-control-color" type="color" id="color" maxlength="7" size="7" width="100" value="#94070A" onchange="changeColor()" onkeyup="changeColor()">
 			</div>
-			<div class="custom-control custom-checkbox">
-				<input class="custom-control-input" id="random" type="checkbox" onchange="changeColor()">
-				<label class="custom-control-label" for="random">使用随机颜色</label>
+			<div class="form-check mb-3">
+				<input class="form-check-input" id="random" type="checkbox" onchange="changeColor()">
+				<label class="form-check-label" for="random">使用随机颜色</label>
 			</div>
-			<div class="form-group">
+			<div class="mb-3">
 				<label>弹幕大小</label>
-				<select class="form-control" id="fontsize">
+				<select class="form-select" id="fontsize">
 					<option value="0.8">小</option>
 					<option value="1" selected="selected">中</option>
 					<option value="1.2">大</option>
 					<option value="1.5">最大</option>
 				</select>
 			</div>
-			<div class="custom-control custom-checkbox">
-				<input class="custom-control-input" id="ignore" type="checkbox" checked>
-				<label class="custom-control-label" for="ignore">忽略系统消息</label>
+			<div class="form-check">
+				<input class="form-check-input" id="ignore" type="checkbox" checked>
+				<label class="form-check-label" for="ignore">忽略系统消息</label>
 			</div>
 		</div>
 	</div>
