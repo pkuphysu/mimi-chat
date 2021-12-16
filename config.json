@@ -1,6 +1,7 @@
 {
 	"port": 8080,
 	"debug": false,
+	"cool_down_time": 3000,
 	"multi_log": false,
 	"single_log": false
 }

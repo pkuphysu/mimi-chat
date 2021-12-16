@@ -33,8 +33,8 @@ const { app, server } = new MiServer({
 	static: path.join(__dirname, "public")
 });
 
-const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt")).toString().split("\n");
-const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt")).toString().split("\n");
+const adj = fs.readFileSync(path.join(__dirname, "name/adj.txt"), "utf-8").split("\n");
+const noun = fs.readFileSync(path.join(__dirname, "name/noun.txt"), "utf-8").split("\n");
 
 app.get("/name/", (req, res) => {
 	const randomName = adj[Math.floor(Math.random() * adj.length)] + "的" + noun[Math.floor(Math.random() * noun.length)];
@@ -43,7 +43,7 @@ app.get("/name/", (req, res) => {
 
 // 控制台输出
 const logs = config.multi_log || config.single_log;
-console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
+console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
 import WebSocket, { WebSocketServer } from "ws";
 const wss = new WebSocketServer({
@@ -89,10 +89,12 @@ wss.on("connection", ws => {
 	ws.on("message", data => {
 		data = data.toString();
 		if (ws.banned || data === "ping") return;
-		ws.banned = true;
-		setTimeout(() => {
-			ws.banned = false;
-		}, 3000); // 避免刷屏
+		if (config.cool_down_time > 0) {
+			ws.banned = true;
+			setTimeout(() => {
+				ws.banned = false;
+			}, config.cool_down_time); // 避免刷屏
+		}
 		const msg = JSON.parse(data);
 		if (!msg.meta) {
 			if (config.debug) {
@@ -106,6 +108,7 @@ wss.on("connection", ws => {
 			console.log("[New Message]", ws.protocol, msglist);
 		}
 		if (config.multi_log) {
+			// FIXME: path traversal
 			fs.appendFile("logs/" + ws.protocol + ".log", timeStamp() + msglist + "\n", err => {
 				if (err) {
 					debug("Failed to write the log.");
