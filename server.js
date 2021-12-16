@@ -24,7 +24,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const config = JSON.parse(fs.readFileSync(process.argv[2] || "./config.json"));
+const config = JSON.parse(fs.readFileSync(process.argv[2] || "./config.json", "utf-8"));
 
 const port = process.env.PORT || config.port;
 
@@ -45,8 +45,8 @@ app.get("/name/", (req, res) => {
 const logs = config.multi_log || config.single_log;
 console.log(`Thank you for using Michat WebSocket server. The server will listen on port ${config.port}. When users connect or send message, logs will ${config.debug ? "" : "not "}show in the console ${((config.debug && logs) || (!config.debug && !logs)) ? "and" : "but" } ${logs ? "write to files in /logs." : "won't write to files." }`);
 
-import WebSocket from "ws";
-const wss = new WebSocket.Server({
+import WebSocket, { WebSocketServer } from "ws";
+const wss = new WebSocketServer({
 	clientTracking: true,
 	maxPayload: 1300, // 50 个 Unicode 字符最大可能大小（Emoji 表情「一家人」）
 	server
@@ -87,6 +87,7 @@ wss.on("connection", ws => {
 	broadcast("system", { count: count[ws.protocol] }, "+1", ws.protocol);
 	// 发送消息
 	ws.on("message", data => {
+		data = data.toString();
 		if (ws.banned || data === "ping") return;
 		ws.banned = true;
 		setTimeout(() => {
