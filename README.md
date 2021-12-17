@@ -1,7 +1,7 @@
 # Mimi Chat
 
-基于 Node.js 构建的 Websocket 实时消息服务器，支持 ws 和 wss 协议。  
-Websocket server based on Node.js
+基于 Node.js 构建的 WebSocket 实时消息服务器，支持 ws 和 wss 协议。  
+WebSocket server based on Node.js
 
 ## Install
 
@@ -34,15 +34,16 @@ node server.js /path/to/your/config.json
 Server options (in `config.json`):
 
 | Option       | Type    | Description                                             |
-|--------------|---------|---------------------------------------------------------|
-| `port`       | Integer | Set the listening port (default: 9000)                  |
-| `debug`      | Boolean | Show logs in the console in order to debug              |
-| `multi_log`  | Boolean | Write logs to different files accroading to the channel |
-| `single_log` | Boolean | Write logs to a single file                             |
+|------------------|---------|---------------------------------------------------------|
+| `port`           | Integer | Set the listening port (default: 8080)                  |
+| `debug`          | Boolean | Show logs in the console in order to debug              |
+| `cool_down_time` | Integer | Set the cool down time                                  |
+| `multi_log`      | Boolean | Write logs to different files accroading to the channel |
+| `single_log`     | Boolean | Write logs to a single file                             |
 
 Client (samples are in the `public` folder):
 ```javascript
-let ws = new WebSocket("ws://localhost:9000", channel);
+let ws = new WebSocket("ws://localhost:8080", channel);
 // If you're using ssl, replace ws with wss
 // You can replace "localhost" with your ip or hostname, clients in the same channel can send messages to each other
 ws.onopen = function() {

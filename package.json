@@ -11,7 +11,7 @@
   "repository": "stevenjoezhang/mimi-chat",
   "keywords": [
     "Michat",
-    "Websocket"
+    "WebSocket"
   ],
   "author": "Mimi <stevenjoezhang@gmail.com> (https://zhangshuqiao.org)",
   "license": "GPL-3.0-or-later",
