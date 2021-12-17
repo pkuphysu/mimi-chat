@@ -19,6 +19,7 @@
 // https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
 import MiServer from "mimi-server";
 
+import net from "net";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -63,7 +64,7 @@ function debug(err) {
 	}
 }
 // count 记录某个频道的人数
-const count = [];
+const count = {};
 // 广播
 function broadcast(from, meta, content, towhom) {
 	const data = JSON.stringify({ from, meta, content });
@@ -84,18 +85,25 @@ wss.on("connection", ws => {
 	// protocol 用来区分 channel 其值与前面的 request.headers["sec-websocket-protocol"] 相同
 	if (!count[ws.protocol]) count[ws.protocol] = 1;
 	else count[ws.protocol]++;
-	broadcast("system", { count: count[ws.protocol] }, "+1", ws.protocol);
+	broadcast("system", {
+		count: count[ws.protocol]
+	}, "+1", ws.protocol);
 	// 发送消息
 	ws.on("message", data => {
-		data = data.toString();
-		if (ws.banned || data === "ping") return;
+		let msg = data.toString();
+		if (ws.banned || msg === "ping") return;
 		if (config.cool_down_time > 0) {
 			ws.banned = true;
 			setTimeout(() => {
 				ws.banned = false;
 			}, config.cool_down_time); // 避免刷屏
 		}
-		const msg = JSON.parse(data);
+		try {
+			msg = JSON.parse(msg);
+		} catch (err) {
+			debug(err);
+			return;
+		}
 		if (!msg.meta) {
 			if (config.debug) {
 				console.log("[Invalid Message]", ws.protocol, msg.content);
@@ -139,3 +147,28 @@ wss.on("connection", ws => {
 wss.on("error", error => {
 	debug(error);
 });
+
+if (config.socket) {
+	const handler = socket => {
+		// Listen for data from client
+		socket.on("data", bytes => {
+			socket.write("done");
+			// Decode byte string
+			let msg = bytes.toString();
+			try {
+				msg = JSON.parse(msg);
+			} catch (err) {
+				debug(err);
+				return;
+			}
+			broadcast("user", msg.meta, msg.content, msg.protocol);
+		});
+	};
+
+	// Remove an existing socket
+	fs.unlink(
+		config.socket,
+		// Create the server, give it our callback handler and listen at the path
+		() => net.createServer(handler).listen(config.socket)
+	);
+}

@@ -125,16 +125,16 @@ window.onresize = resize;
 resize();
 
 function createDanmaku(text, size, color) {
-	let fontSize = canvas.height / 10;
-	let danmaku = {
+	const reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
+	const fontSize = canvas.height / 10;
+	const danmaku = {
 		speed: (canvas.width / 500) * (Math.random() * 0.5 + 0.75),
 		x    : canvas.width,
 		y    : Math.random() * canvas.height * 4 / 5 + fontSize, //避免高度重复？
 		text,
-		size : fontSize * size
+		size : fontSize * size,
+		color: reg.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)]
 	};
-	let reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
-	danmaku.color = reg.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)];
 	return danmaku;
 }
 
