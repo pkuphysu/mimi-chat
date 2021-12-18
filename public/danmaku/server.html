@@ -40,7 +40,14 @@ canvas {
 	<span id="channel"></span>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
-
+<script>
+window.MathJax = {
+	svg: {
+		fontCache: 'none'
+	}
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 <script>
 /*
  * Mimi Danmaku
@@ -121,7 +128,7 @@ class Danmaku {
 
 		ws.onmessage = event => {
 			const msg = JSON.parse(event.data);
-			if (!msg.meta) return;
+			if (!msg.meta || typeof msg.content !== "string") return;
 			if (msg.from !== "user") return;
 			console.log(msg);
 			this.createDanmaku(msg);
@@ -149,19 +156,54 @@ class Danmaku {
 		return colors[Math.floor(Math.random() * colors.length)];
 	}
 
-	createDanmaku(message) {
-		let { content, meta: { size, color } } = message;
-		const reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
+	danmakuFactory(content) {
 		const fontSize = this.canvas.height / 10;
-		const danmaku = {
+		return {
 			speed: (this.canvas.width / 500) * (Math.random() * 0.5 + 0.75),
 			x    : this.canvas.width,
 			y    : Math.random() * this.canvas.height * 4 / 5 + fontSize, //避免高度重复？
-			content,
+			content
+		};
+	}
+
+	createDanmaku(message) {
+		const reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
+		if (!reg.test(message.meta.color)) message.meta.color = this.randColor();
+		const { content, meta: { size, color } } = message;
+		const fontSize = this.canvas.height / 10;
+		if (content.startsWith("$") && content.endsWith("$")) {
+			this.renderMath(message);
+			return;
+		}
+		const danmaku = {
+			...this.danmakuFactory(content),
 			size : fontSize * size,
-			color: reg.test(color) ? color : this.randColor()
+			color
 		};
 		this.output.push(danmaku);
+	}
+
+	async renderMath(message) {
+		let { content, meta: { size, color } } = message;
+		content = content.match(/^\$(.*?)\$$/)[1];
+		const svgOut = await MathJax.tex2svgPromise(content, {
+			display: false
+		});
+		const svg = svgOut.querySelector("svg");
+		const img = new Image();
+		let xml = new XMLSerializer().serializeToString(svg);
+		xml = xml.replace(/currentColor/g, color);
+		img.src = "data:image/svg+xml;base64," + btoa(xml);
+		img.onload = () => {
+			const fontSize = this.canvas.height / 10;
+			const danmaku = {
+				...this.danmakuFactory(img),
+				width: img.width,
+				height: img.height
+			};
+			this.output.push(danmaku);
+		};
+		return svg;
 	}
 
 	draw(obj) {
