@@ -240,14 +240,14 @@ function checkKey(event) {
 function send() {
 	const message = document.getElementById("input").value;
 	if (!message.replace(/\s/g, "")) return;
-	const fontsize = document.getElementById("fontsize").value;
-	let fontcolor = document.getElementById("color").value;
-	if (document.getElementById("random").checked) fontcolor = 0;
+	const size = document.getElementById("fontsize").value;
+	let color = document.getElementById("color").value;
+	if (document.getElementById("random").checked) color = 0;
 	const data = JSON.stringify({
 		meta: {
 			user: username,
-			size: fontsize,
-			color: fontcolor
+			size,
+			color
 		},
 		content: message.trim()
 	});
