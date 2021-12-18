@@ -68,90 +68,111 @@ QRCode.toDataURL(new URL(`.?channel=${channel}`, window.location).href, (err, ur
 	img.src = url;
 	document.getElementById("qrcode").insertAdjacentElement("afterbegin", img);
 });
-const serverUrl = new URL("../", window.location);
-serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
-wsinit(serverUrl, "danmaku" + channel);
 
-function wsinit() {
-	const ws = new WebSocket(...arguments);
-	const timer = setInterval(() => {
-		ws.send("ping");
-	}, 30000);
+class Danmaku {
+	constructor() {
+		const serverUrl = new URL("../", window.location);
+		serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
+		this.wsinit(serverUrl, "danmaku" + channel);
+		this.output = [];
 
-	ws.onopen = function() {
-		alert("系统消息：建立连接成功");
-	};
+		const canvas = document.createElement("canvas");
+		const context = canvas.getContext("2d");
+		document.body.appendChild(canvas);
 
-	ws.onmessage = function(event) {
-		const msg = JSON.parse(event.data);
-		if (!msg.meta) return;
-		if (msg.from !== "user") return;
-		const messageArray = [msg.content, msg.meta.size, msg.meta.color];
-		console.log(messageArray);
-		output.push(createDanmaku(...messageArray));
-	};
+		const availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
+		const Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
+		canvas.style.backgroundImage = `url(${Bg})`;
 
-	ws.onerror = function() {
-		console.log("系统消息：连接失败，请刷新页面或退出重连");
-	};
+		this.canvas = canvas;
+		this.context = context;
 
-	ws.onclose = function() {
-		console.log("系统消息：连接已断开");
-		clearInterval(timer);
-	};
+		window.addEventListener("resize", () => this.resize());
+		this.resize();
 
-	return ws;
+		setInterval(() => {
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.output = this.output.filter(item => {
+				this.draw(item);
+				item.x -= item.speed;
+				let width;
+				if (typeof item.content === "string") {
+					width = this.context.measureText(item.content).width;
+				} else {
+					width = item.width;
+				}
+				return item.x >= -width;
+			});
+		}, 20);
+	}
+
+	wsinit() {
+		const ws = new WebSocket(...arguments);
+		const timer = setInterval(() => {
+			ws.send("ping");
+		}, 30000);
+
+		ws.onopen = () => {
+			alert("系统消息：建立连接成功");
+		};
+
+		ws.onmessage = event => {
+			const msg = JSON.parse(event.data);
+			if (!msg.meta) return;
+			if (msg.from !== "user") return;
+			console.log(msg);
+			this.createDanmaku(msg);
+		};
+
+		ws.onerror = () => {
+			console.log("系统消息：连接失败，请刷新页面或退出重连");
+		};
+
+		ws.onclose = () => {
+			console.log("系统消息：连接已断开");
+			clearInterval(timer);
+		};
+
+		this.ws = ws;
+	}
+
+	resize() {
+		this.canvas.width = window.innerWidth
+		this.canvas.height = window.innerHeight;
+	}
+
+	randColor() {
+		const colors = ["orange", "red", "blue", "purple", "green", "white"];
+		return colors[Math.floor(Math.random() * colors.length)];
+	}
+
+	createDanmaku(message) {
+		let { content, meta: { size, color } } = message;
+		const reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
+		const fontSize = this.canvas.height / 10;
+		const danmaku = {
+			speed: (this.canvas.width / 500) * (Math.random() * 0.5 + 0.75),
+			x    : this.canvas.width,
+			y    : Math.random() * this.canvas.height * 4 / 5 + fontSize, //避免高度重复？
+			content,
+			size : fontSize * size,
+			color: reg.test(color) ? color : this.randColor()
+		};
+		this.output.push(danmaku);
+	}
+
+	draw(obj) {
+		if (typeof obj.content === "string") {
+			this.context.font = `700 ${obj.size}px Microsoft YaHei`;
+			this.context.fillStyle = obj.color;
+			this.context.fillText(obj.content, obj.x, obj.y);
+		} else {
+			this.context.drawImage(obj.content, obj.x, obj.y, obj.width, obj.height);
+		}
+	}
 }
 
-let output = [];
-
-const canvas = document.createElement("canvas");
-const context = canvas.getContext("2d");
-document.body.appendChild(canvas);
-
-const availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
-const Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
-canvas.style.backgroundImage = `url(${Bg})`;
-
-const availableColor = ["orange", "red", "blue", "purple", "green", "white"];
-
-function resize() {
-	canvas.width = window.innerWidth
-	canvas.height = window.innerHeight;
-}
-
-window.onresize = resize;
-
-resize();
-
-function createDanmaku(text, size, color) {
-	const reg = /^#([\da-fA-F]{6}|[\da-fA-F]{3})$/;
-	const fontSize = canvas.height / 10;
-	const danmaku = {
-		speed: (canvas.width / 500) * (Math.random() * 0.5 + 0.75),
-		x    : canvas.width,
-		y    : Math.random() * canvas.height * 4 / 5 + fontSize, //避免高度重复？
-		text,
-		size : fontSize * size,
-		color: reg.test(color) ? color : availableColor[Math.floor(Math.random() * availableColor.length)]
-	};
-	return danmaku;
-}
-
-function draw(obj) {
-	context.font = `700 ${obj.size}px Microsoft YaHei`;
-	context.fillStyle = obj.color;
-	context.fillText(obj.text, obj.x, obj.y);
-}
-
-setInterval(() => {
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	output = output.filter(item => {
-		draw(item);
-		item.x -= item.speed;
-		return item.x >= -context.measureText(item.text).width;
-	});
-}, 20);
+const danmaku = new Danmaku();
 </script>
 </body>
 </html>
