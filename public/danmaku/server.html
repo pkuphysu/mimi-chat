@@ -71,27 +71,15 @@ QRCode.toDataURL(new URL(`.?channel=${channel}`, window.location).href, (err, ur
 
 class Danmaku {
 	constructor() {
-		const serverUrl = new URL("../", window.location);
-		serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
-		this.wsinit(serverUrl, "danmaku" + channel);
+		this.wsinit();
 		this.output = [];
 
-		const canvas = document.createElement("canvas");
-		const context = canvas.getContext("2d");
-		document.body.appendChild(canvas);
-
-		const availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
-		const Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
-		canvas.style.backgroundImage = `url(${Bg})`;
-
-		this.canvas = canvas;
-		this.context = context;
-
+		this.createCanvas();
 		window.addEventListener("resize", () => this.resize());
 		this.resize();
 
 		setInterval(() => {
-			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 			this.output = this.output.filter(item => {
 				this.draw(item);
 				item.x -= item.speed;
@@ -106,8 +94,23 @@ class Danmaku {
 		}, 20);
 	}
 
+	createCanvas() {
+		const canvas = document.createElement("canvas");
+		const context = canvas.getContext("2d");
+		document.body.appendChild(canvas);
+
+		const availableBg = ["sky.jpg", "bg1.jpg", "bg2.jpg"];
+		const Bg = availableBg[Math.floor(Math.random() * availableBg.length)];
+		canvas.style.backgroundImage = `url(${Bg})`;
+
+		this.canvas = canvas;
+		this.context = context;
+	}
+
 	wsinit() {
-		const ws = new WebSocket(...arguments);
+		const serverUrl = new URL("../", window.location);
+		serverUrl.protocol = serverUrl.protocol.replace("http", "ws");
+		const ws = new WebSocket(serverUrl, "danmaku" + channel);
 		const timer = setInterval(() => {
 			ws.send("ping");
 		}, 30000);
