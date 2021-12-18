@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="user-scalable=no, viewport-fit=cover">
-<title>Mimi 弹幕服务端</title>
+<title>Mimi 弹幕</title>
 <style>
 body {
 	background-attachment: fixed;
@@ -78,12 +78,10 @@ QRCode.toDataURL(new URL(`.?channel=${channel}`, window.location).href, (err, ur
 
 class Danmaku {
 	constructor() {
-		this.wsinit();
-		this.output = [];
-
 		this.createCanvas();
-		window.addEventListener("resize", () => this.resize());
-		this.resize();
+
+		this.output = [];
+		this.wsinit();
 
 		setInterval(() => {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -112,6 +110,8 @@ class Danmaku {
 
 		this.canvas = canvas;
 		this.context = context;
+		window.addEventListener("resize", () => this.resize());
+		this.resize();
 	}
 
 	wsinit() {
@@ -177,7 +177,7 @@ class Danmaku {
 		}
 		const danmaku = {
 			...this.danmakuFactory(content),
-			size : fontSize * size,
+			size: fontSize * size,
 			color
 		};
 		this.output.push(danmaku);
@@ -195,10 +195,9 @@ class Danmaku {
 		xml = xml.replace(/currentColor/g, color);
 		img.src = "data:image/svg+xml;base64," + btoa(xml);
 		img.onload = () => {
-			const fontSize = this.canvas.height / 10;
 			const danmaku = {
 				...this.danmakuFactory(img),
-				width: img.width,
+				width : img.width,
 				height: img.height
 			};
 			this.output.push(danmaku);

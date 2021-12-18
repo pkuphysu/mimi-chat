@@ -6,6 +6,14 @@
 <title>Mimi聊天</title>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css">
+<style>
+#msg-list {
+	width: 100%;
+	height: 400px;
+	font-size: large;
+	resize: none;
+}
+</style>
 </head>
 <body>
 <div class="navbar navbar-expand-md navbar-light bg-light mb-4">
@@ -33,24 +41,24 @@
 				<div class="card-header">
 					Mimi在线聊天室
 				</div>
-				<textarea id="msg_list" class="form-control" style="width: 100%; height: 400px; font-size: large; resize: none;" readonly="readonly">
+				<textarea id="msg-list" class="form-control" readonly="readonly">
 				</textarea>
 				<div class="input-group">
 					<span class="input-group-text">消息</span>
-					<input type="text" class="form-control" id="msg_box" onkeydown="checkKey(event)">
+					<input type="text" class="form-control" id="msg-box" onkeydown="checkKey(event)">
 					<button type="button" class="btn btn-primary" onclick="send()">发送</button>
 				</div>
 			</div>
 		</div>
 		<div class="col-md-3 text-center mb-4">
-			<h1 id="user_num">当前在线：0</h1>
+			<h1 id="user-num">当前在线：0</h1>
 			<div class="mb-3">
-				<label for="show_channel">频道</label>
-				<input class="form-control" type="text" id="show_channel" disabled="disabled">
+				<label for="show-channel">频道</label>
+				<input class="form-control" type="text" id="show-channel" disabled="disabled">
 			</div>
 			<div class="mb-3">
-				<label for="show_name">用户名</label>
-				<input class="form-control" type="text" id="show_name">
+				<label for="show-name">用户名</label>
+				<input class="form-control" type="text" id="show-name">
 			</div>
 			<div class="mb-3">
 				<button class="btn btn-success" type="button" onclick="randomName()">随机</button>
@@ -72,10 +80,10 @@ function randomName() {
 	fetch("/name/").then(response => {
 		return response.text();
 	}).then(data => {
-		document.getElementById("show_name").value = data;
+		document.getElementById("show-name").value = data;
 	}).catch(function(error) {
 		console.log("There has been a problem with your fetch operation: ", error.message);
-		document.getElementById("show_name").value = "蛤";
+		document.getElementById("show-name").value = "蛤";
 	});
 }
 
@@ -86,7 +94,7 @@ function wsinit() {
 	}, 30000);
 
 	ws.onopen = function () {
-		document.getElementById("msg_list").innerHTML = "";
+		document.getElementById("msg-list").value = "";
 		listMsg("系统消息：建立连接成功");
 	};
 
@@ -97,7 +105,7 @@ function wsinit() {
 		switch (msg.from) {
 			case "system":
 				sender = "系统消息：在线人数";
-				document.getElementById("user_num").innerHTML = "当前在线：" + msg.meta.count;
+				document.getElementById("user-num").textContent = "当前在线：" + msg.meta.count;
 				break;
 			case "user":
 				sender = msg.meta.user + "：";
@@ -108,7 +116,7 @@ function wsinit() {
 	};
 
 	ws.onerror = function () {
-		document.getElementById("msg_list").innerHTML = "";
+		document.getElementById("msg-list").value = "";
 		listMsg("系统消息：连接失败，请刷新或稍后再试");
 	};
 
@@ -120,12 +128,12 @@ function wsinit() {
 }
 
 function submit() {
-	uname = document.getElementById("show_name").value;
+	uname = document.getElementById("show-name").value;
 	alert("用户名已更新！");
 }
 
 function cancel() {
-	document.getElementById("show_name").value = uname;
+	document.getElementById("show-name").value = uname;
 }
 
 function checkKey(event) {
@@ -133,12 +141,12 @@ function checkKey(event) {
 }
 
 function send() {
-	const content = document.getElementById("msg_box").value;
+	const content = document.getElementById("msg-box").value;
 	if (!content.replace(/\s/g, "")) {
 		alert("内容无效！");
 		return;
 	}
-	const name = uname || document.getElementById("show_name").value;
+	const name = uname || document.getElementById("show-name").value;
 	const data = JSON.stringify({
 		meta: {
 			user: name
@@ -146,14 +154,14 @@ function send() {
 		content: content.trim()
 	});
 	ws.send(data);
-	document.getElementById("msg_box").value = "";
+	document.getElementById("msg-box").value = "";
 	return true;
 }
 
 function listMsg(data) {
-	let msg_list = document.getElementById("msg_list");
-	msg_list.innerHTML += data + "\n";
-	msg_list.scrollTop = msg_list.scrollHeight;
+	const msgList = document.getElementById("msg-list");
+	msgList.value += data + "\n";
+	msgList.scrollTop = msgList.scrollHeight;
 }
 </script>
 </body>
