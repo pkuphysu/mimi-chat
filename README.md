@@ -36,6 +36,7 @@ Server options (in `config.json`):
 | Option       | Type    | Description                                             |
 |------------------|---------|---------------------------------------------------------|
 | `port`           | Integer | Set the listening port (default: 8080)                  |
+| `socket`         | String  | Set the UNIX domain socket to listen                    |
 | `debug`          | Boolean | Show logs in the console in order to debug              |
 | `cool_down_time` | Integer | Set the cool down time                                  |
 | `multi_log`      | Boolean | Write logs to different files accroading to the channel |
